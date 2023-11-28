@@ -5,5 +5,5 @@ https://github.com/ChristopherBrix/vnncomp2023_benchmarks/blob/main/benchmarks/c
 
 Traffic Signs Recognition 
 Alpha Beta Crown
-marabou
+neuralsat - https://github.com/dynaroars/neuralsat
 
