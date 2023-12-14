@@ -11,3 +11,5 @@ Alpha Beta Crown Tutorial - https://colab.research.google.com/github/DDiekmann/A
 
 Tool - neuralsat - https://github.com/dynaroars/neuralsat
 
+Link Fisier Latex: https://www.overleaf.com/2885521132qznfzkxdfygy#baf239
+
