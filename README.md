@@ -13,3 +13,4 @@ Tool - neuralsat - https://github.com/dynaroars/neuralsat
 
 Link Fisier Latex: https://www.overleaf.com/2885521132qznfzkxdfygy#baf239
 
+Link Discord Chat: https://discord.gg/nrsEUeeM
