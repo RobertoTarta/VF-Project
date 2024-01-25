@@ -1,0 +1,90 @@
+# Output for onnx/3_30_30_QConv_16_3_QConv_32_2_Dense_43_ep_30.onnx <-> vnnlib/model_30_idx_7040_eps_1.00000.vnnlib:
+sat,3.3238
+# Output for onnx/3_30_30_QConv_16_3_QConv_32_2_Dense_43_ep_30.onnx <-> vnnlib/model_30_idx_7040_eps_3.00000.vnnlib:
+sat,2.8503
+# Output for onnx/3_30_30_QConv_16_3_QConv_32_2_Dense_43_ep_30.onnx <-> vnnlib/model_30_idx_7040_eps_5.00000.vnnlib:
+sat,2.9873
+# Output for onnx/3_30_30_QConv_16_3_QConv_32_2_Dense_43_ep_30.onnx <-> vnnlib/model_30_idx_7040_eps_10.00000.vnnlib:
+sat,2.6892
+# Output for onnx/3_30_30_QConv_16_3_QConv_32_2_Dense_43_ep_30.onnx <-> vnnlib/model_30_idx_7040_eps_15.00000.vnnlib:
+sat,3.0034
+# Output for onnx/3_30_30_QConv_16_3_QConv_32_2_Dense_43_ep_30.onnx <-> vnnlib/model_30_idx_8258_eps_1.00000.vnnlib:
+sat,3.1113
+# Output for onnx/3_30_30_QConv_16_3_QConv_32_2_Dense_43_ep_30.onnx <-> vnnlib/model_30_idx_8258_eps_3.00000.vnnlib:
+sat,2.7802
+# Output for onnx/3_30_30_QConv_16_3_QConv_32_2_Dense_43_ep_30.onnx <-> vnnlib/model_30_idx_8258_eps_5.00000.vnnlib:
+sat,2.9564
+# Output for onnx/3_30_30_QConv_16_3_QConv_32_2_Dense_43_ep_30.onnx <-> vnnlib/model_30_idx_8258_eps_10.00000.vnnlib:
+sat,3.2800
+# Output for onnx/3_30_30_QConv_16_3_QConv_32_2_Dense_43_ep_30.onnx <-> vnnlib/model_30_idx_8258_eps_15.00000.vnnlib:
+sat,2.9556
+# Output for onnx/3_30_30_QConv_16_3_QConv_32_2_Dense_43_ep_30.onnx <-> vnnlib/model_30_idx_11985_eps_1.00000.vnnlib:
+sat,2.7804
+# Output for onnx/3_30_30_QConv_16_3_QConv_32_2_Dense_43_ep_30.onnx <-> vnnlib/model_30_idx_11985_eps_3.00000.vnnlib:
+sat,3.0783
+# Output for onnx/3_30_30_QConv_16_3_QConv_32_2_Dense_43_ep_30.onnx <-> vnnlib/model_30_idx_11985_eps_5.00000.vnnlib:
+sat,2.8516
+# Output for onnx/3_30_30_QConv_16_3_QConv_32_2_Dense_43_ep_30.onnx <-> vnnlib/model_30_idx_11985_eps_10.00000.vnnlib:
+sat,3.0768
+# Output for onnx/3_30_30_QConv_16_3_QConv_32_2_Dense_43_ep_30.onnx <-> vnnlib/model_30_idx_11985_eps_15.00000.vnnlib:
+sat,3.3349
+# Output for onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx <-> vnnlib/model_48_idx_7040_eps_1.00000.vnnlib:
+sat,3.3864
+# Output for onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx <-> vnnlib/model_48_idx_7040_eps_3.00000.vnnlib:
+sat,3.2462
+# Output for onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx <-> vnnlib/model_48_idx_7040_eps_5.00000.vnnlib:
+sat,3.3949
+# Output for onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx <-> vnnlib/model_48_idx_7040_eps_10.00000.vnnlib:
+sat,3.0596
+# Output for onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx <-> vnnlib/model_48_idx_7040_eps_15.00000.vnnlib:
+sat,3.4813
+# Output for onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx <-> vnnlib/model_48_idx_8258_eps_1.00000.vnnlib:
+sat,3.5800
+# Output for onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx <-> vnnlib/model_48_idx_8258_eps_3.00000.vnnlib:
+sat,3.3863
+# Output for onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx <-> vnnlib/model_48_idx_8258_eps_5.00000.vnnlib:
+sat,3.8442
+# Output for onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx <-> vnnlib/model_48_idx_8258_eps_10.00000.vnnlib:
+sat,3.4188
+# Output for onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx <-> vnnlib/model_48_idx_8258_eps_15.00000.vnnlib:
+sat,3.4545
+# Output for onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx <-> vnnlib/model_48_idx_11985_eps_1.00000.vnnlib:
+sat,3.4451
+# Output for onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx <-> vnnlib/model_48_idx_11985_eps_3.00000.vnnlib:
+sat,3.4501
+# Output for onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx <-> vnnlib/model_48_idx_11985_eps_5.00000.vnnlib:
+sat,3.3458
+# Output for onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx <-> vnnlib/model_48_idx_11985_eps_10.00000.vnnlib:
+sat,3.6075
+# Output for onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx <-> vnnlib/model_48_idx_11985_eps_15.00000.vnnlib:
+sat,3.6553
+# Output for onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx <-> vnnlib/model_64_idx_7040_eps_1.00000.vnnlib:
+sat,4.1108
+# Output for onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx <-> vnnlib/model_64_idx_7040_eps_3.00000.vnnlib:
+sat,4.3606
+# Output for onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx <-> vnnlib/model_64_idx_7040_eps_5.00000.vnnlib:
+sat,4.4254
+# Output for onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx <-> vnnlib/model_64_idx_7040_eps_10.00000.vnnlib:
+sat,4.6050
+# Output for onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx <-> vnnlib/model_64_idx_7040_eps_15.00000.vnnlib:
+sat,4.7117
+# Output for onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx <-> vnnlib/model_64_idx_8258_eps_1.00000.vnnlib:
+sat,5.2346
+# Output for onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx <-> vnnlib/model_64_idx_8258_eps_3.00000.vnnlib:
+sat,4.6967
+# Output for onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx <-> vnnlib/model_64_idx_8258_eps_5.00000.vnnlib:
+sat,4.9928
+# Output for onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx <-> vnnlib/model_64_idx_8258_eps_10.00000.vnnlib:
+sat,4.9464
+# Output for onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx <-> vnnlib/model_64_idx_8258_eps_15.00000.vnnlib:
+sat,4.4765
+# Output for onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx <-> vnnlib/model_64_idx_11985_eps_1.00000.vnnlib:
+sat,4.6489
+# Output for onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx <-> vnnlib/model_64_idx_11985_eps_3.00000.vnnlib:
+sat,4.9851
+# Output for onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx <-> vnnlib/model_64_idx_11985_eps_5.00000.vnnlib:
+sat,4.6127
+# Output for onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx <-> vnnlib/model_64_idx_11985_eps_10.00000.vnnlib:
+sat,5.6851
+# Output for onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx <-> vnnlib/model_64_idx_11985_eps_15.00000.vnnlib:
+sat,4.8429

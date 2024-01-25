@@ -1,0 +1,1500 @@
+python abcrown.py --config exp_configs/vnncomp23/gtrsb.yaml
+/home/mdariad/anaconda3/envs/alpha-beta-crown/lib/python3.9/site-packages/pkg_resources/__init__.py:121: DeprecationWarning: pkg_resources is deprecated as an API
+  warnings.warn("pkg_resources is deprecated as an API", DeprecationWarning)
+/home/mdariad/anaconda3/envs/alpha-beta-crown/lib/python3.9/site-packages/pkg_resources/__init__.py:2870: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('google')`.
+Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+  declare_namespace(pkg)
+Configurations:
+
+general:
+  device: cuda
+  seed: 100
+  conv_mode: patches
+  deterministic: false
+  double_fp: false
+  loss_reduction_func: min
+  sparse_alpha: true
+  sparse_interm: true
+  save_adv_example: false
+  eval_adv_example: false
+  show_adv_example: false
+  precompile_jit: false
+  complete_verifier: bab
+  enable_incomplete_verification: true
+  csv_name: instances2.csv
+  results_file: out.txt
+  root_path: ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition
+  deterministic_opt: false
+  graph_optimizer: 'Customized("custom_graph_optimizer", "merge_sign")'
+  no_batchdim_buffers: true
+  save_output: false
+  output_file: out.pkl
+model:
+  name: null
+  path: null
+  onnx_path: null
+  onnx_path_prefix: ''
+  cache_onnx_conversion: false
+  debug_onnx: false
+  onnx_quirks: null
+  input_shape: null
+  onnx_loader: 'Customized("custom_model_loader", "customized_Gtrsb_loader")'
+  onnx_optimization_flags: fix_gtrsb
+  onnx_vnnlib_joint_optimization_flags: [peel_off_last_softmax_layer]
+  check_optmized: true
+  flatten_final_output: false
+  optimize_graph: null
+data:
+  start: 0
+  end: 10000
+  select_instance: null
+  num_outputs: 10
+  mean: 0.0
+  std: 1.0
+  pkl_path: null
+  dataset: null
+  data_filter_path: null
+  data_idx_file: null
+specification:
+  type: lp
+  robustness_type: verified-acc
+  norm: .inf
+  epsilon: null
+  epsilon_min: 0.0
+  vnnlib_path: null
+  vnnlib_path_prefix: ''
+  rhs_offset: null
+solver:
+  batch_size: 128
+  auto_enlarge_batch_size: false
+  min_batch_size_ratio: 0.1
+  use_float64_in_last_iteration: false
+  early_stop_patience: 10
+  start_save_best: 0.5
+  bound_prop_method: alpha-crown
+  init_bound_prop_method: same
+  prune_after_crown: false
+  crown:
+    batch_size: 1000000000
+    max_crown_size: 1000000000
+  alpha-crown:
+    alpha: true
+    lr_alpha: 0.1
+    iteration: 100
+    share_alphas: false
+    lr_decay: 0.98
+    full_conv_alpha: true
+    max_coeff_mul: .inf
+    matmul_share_alphas: false
+    apply_output_constraints_to: []
+    disable_optimization: [MaxPool]
+  beta-crown:
+    lr_alpha: 0.01
+    lr_beta: 0.03
+    lr_decay: 0.98
+    optimizer: adam
+    iteration: 20
+    beta: true
+    beta_warmup: true
+    enable_opt_interm_bounds: false
+    all_node_split_LP: false
+  forward:
+    refine: false
+    dynamic: false
+    max_dim: 10000
+  multi_class:
+    label_batch_size: 32
+    skip_with_refined_bound: true
+  mip:
+    parallel_solvers: 8
+    solver_threads: 4
+    refine_neuron_timeout: 15
+    refine_neuron_time_percentage: 0.8
+    early_stop: true
+    adv_warmup: true
+    mip_solver: gurobi
+    skip_unsafe: true
+bab:
+  initial_max_domains: 1
+  max_domains: .inf
+  decision_thresh: 0
+  timeout: 360
+  timeout_scale: 1
+  override_timeout: null
+  get_upper_bound: false
+  dfs_percent: 0.0
+  pruning_in_iteration: true
+  pruning_in_iteration_ratio: 0.2
+  sort_targets: false
+  batched_domain_list: true
+  optimized_interm: ''
+  interm_transfer: true
+  recompute_interm: false
+  sort_domain_interval: -1
+  vanilla_crown: false
+  cut:
+    enabled: false
+    implication: false
+    bab_cut: false
+    lp_cut: false
+    method: null
+    lr: 0.01
+    lr_decay: 1.0
+    iteration: 100
+    bab_iteration: -1
+    early_stop_patience: -1
+    lr_beta: 0.02
+    number_cuts: 50
+    topk_cuts_in_filter: 1000
+    batch_size_primal: 100
+    max_num: 1000000000
+    patches_cut: false
+    cplex_cuts: false
+    cplex_cuts_wait: 0
+    cplex_cuts_revpickup: true
+    cut_reference_bounds: true
+    fix_intermediate_bounds: false
+  branching:
+    method: kfsb
+    candidates: 5
+    reduceop: max
+    enable_intermediate_bound_opt: false
+    branching_input_and_activation: false
+    branching_input_and_activation_order: [input, relu]
+    branching_input_iterations: 30
+    branching_relu_iterations: 50
+    sb_coeff_thresh: 0.001
+    nonlinear_split:
+      method: shortcut
+      branching_point_method: uniform
+      num_branches: 2
+      branching_point_refinement: false
+      filter: false
+      filter_beta: false
+      filter_batch_size: 10000
+      filter_iterations: 25
+      shortlist_size: 500
+      loose_tanh_threshold: null
+    new_input_split:
+      enable: false
+      batch_size: 2
+      rounds: 1
+      init_alpha_batch_size: 8192
+      full_alpha: false
+    input_split:
+      enable: false
+      enhanced_bound_prop_method: alpha-crown
+      enhanced_branching_method: naive
+      enhanced_bound_patience: 100000000.0
+      attack_patience: 100000000.0
+      adv_check: 0
+      split_partitions: 2
+      sb_margin_weight: 1.0
+      sb_primary_spec: null
+      sb_primary_spec_iter: 1
+      sb_sum: false
+      bf_backup_thresh: -1
+      bf_rhs_offset: 0
+      bf_zero_crossing_score: false
+      ibp_enhancement: false
+      catch_assertion: false
+      compare_with_old_bounds: false
+      update_rhs_with_attack: false
+  attack:
+    enabled: false
+    beam_candidates: 8
+    beam_depth: 7
+    max_dive_fix_ratio: 0.8
+    min_local_free_ratio: 0.2
+    mip_start_iteration: 5
+    mip_timeout: 30.0
+    adv_pool_threshold: null
+    refined_mip_attacker: false
+    refined_batch_size: null
+attack:
+  pgd_order: before
+  pgd_steps: 100
+  pgd_restarts: 50
+  pgd_batch_size: 50
+  pgd_early_stop: true
+  pgd_lr_decay: 0.99
+  pgd_alpha: auto
+  pgd_loss_mode: null
+  enable_mip_attack: false
+  adv_saver: 'Customized("custom_adv_saver", "customized_gtrsb_saver")'
+  early_stop_condition: 'Customized("custom_early_stop_condition", "customized_gtrsb_condition")'
+  adv_example_finalizer: 'Customized("custom_adv_example_finalizer", "customized_gtrsb_adv_example_finalizer")'
+  pgd_loss: 'Customized("custom_pgd_loss", "customized_gtrsb_loss")'
+  cex_path: ./test_cex.txt
+  attack_mode: PGD
+  attack_tolerance: 0.0
+  attack_func: 'Customized("custom_attacker", "use_LiRPANet")'
+  gama_lambda: 10.0
+  gama_decay: 0.9
+  check_clean: false
+  input_split:
+    pgd_steps: 100
+    pgd_restarts: 30
+    pgd_alpha: auto
+  input_split_enhanced:
+    pgd_steps: 200
+    pgd_restarts: 500000
+    pgd_alpha: auto
+  input_split_check_adv:
+    pgd_steps: 5
+    pgd_restarts: 5
+    pgd_alpha: auto
+    max_num_domains: 10
+debug:
+  view_model: false
+  lp_test: null
+  rescale_vnnlib_ptb: null
+  test_optimized_bounds: false
+  test_optimized_bounds_after_n_iterations: 0
+
+Experiments at Sat Jan 20 21:33:11 2024 on h1
+no customized start/end sample, testing all samples in instances2.csv
+Internal results will be saved to out.txt.
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 0, vnnlib ID: 0 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Using onnx onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx
+Using vnnlib vnnlib/model_64_idx_7040_eps_1.00000.vnnlib
+Loading onnx ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx wih quirks {}
+Onnx optimization with flag: fix_gtrsb
+Found existed optimized onnx model at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx.optimized
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+/home/mdariad/anaconda3/envs/alpha-beta-crown/lib/python3.9/site-packages/onnx2pytorch/convert/model.py:151: UserWarning: Using experimental implementation that allows 'batch_size > 1'.Batchnorm layers could potentially produce false outputs.
+  warnings.warn(
+Precompiled vnnlib file found at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/vnnlib/model_64_idx_7040_eps_1.00000.vnnlib.compiled
+Last Softmax node found, peel it off
+/home/mdariad/anaconda3/envs/alpha-beta-crown/lib/python3.9/site-packages/onnx2pytorch/utils.py:21: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+  return value.ndim == 0 or value.shape == torch.Size([1])
+/home/mdariad/anaconda3/envs/alpha-beta-crown/lib/python3.9/site-packages/onnx2pytorch/operations/add.py:34: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+  elif all(x == 1 for x in input[0].shape):
+/home/mdariad/anaconda3/envs/alpha-beta-crown/lib/python3.9/site-packages/onnx2pytorch/operations/reshape.py:36: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+  if shape[0] == 1 and len(shape) in [2, 3, 4, 5] and self.quirks.get("fix_batch_size") is True:
+/home/mdariad/anaconda3/envs/alpha-beta-crown/lib/python3.9/site-packages/onnx2pytorch/operations/reshape.py:54: TracerWarning: torch.tensor results are registered as constants in the trace. You can safely ignore this warning if you use this function to create tensors out of constant variables that would be the same every time you call this function. In any other case, this might cause the trace to be incorrect.
+  if (torch.prod(torch.tensor(input.shape)) != torch.prod(shape) and len(input.size()) == len(shape) + 1
+/home/mdariad/anaconda3/envs/alpha-beta-crown/lib/python3.9/site-packages/onnx2pytorch/operations/reshape.py:54: TracerWarning: Using len to get tensor shape might cause the trace to be incorrect. Recommended usage would be tensor.shape[0]. Passing a tensor of different shape might lead to errors or silently give incorrect results.
+  if (torch.prod(torch.tensor(input.shape)) != torch.prod(shape) and len(input.size()) == len(shape) + 1
+/home/mdariad/anaconda3/envs/alpha-beta-crown/lib/python3.9/site-packages/onnx2pytorch/operations/reshape.py:58: TracerWarning: Iterating over a tensor might cause the trace to be incorrect. Passing a tensor of different shape won't change the number of iterations executed (and might lead to errors or silently give incorrect results).
+  shape = [x if x != 0 else input.size(i) for i, x in enumerate(shape)]
+/home/mdariad/anaconda3/envs/alpha-beta-crown/lib/python3.9/site-packages/torch/nn/functional.py:749: UserWarning: Note that order of the arguments: ceil_mode and return_indices will changeto match the args list in nn.MaxPool2d in a future release.
+  warnings.warn("Note that order of the arguments: ceil_mode and return_indices will change"
+Merging Sign node: %s BoundSign(name=/44, inputs=[/43], perturbed=False)
+Merging Sign node: %s BoundSign(name=/50, inputs=[/49], perturbed=False)
+Merging Sign node: %s BoundSign(name=/56, inputs=[/55], perturbed=False)
+Merging Sign node: %s BoundSign(name=/71, inputs=[/70], perturbed=False)
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=0.25, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[  10.,   92.,  234.,  416.,  -12.,  222.,   88., -176., -148.,   42.,
+         -106., -104.,  -72., -108.,   -4.,   34.,   46., -106.,  -12.,  -76.,
+          -52.,  -60.,    6.,  -44., -104.,   18.,  -96.,  -58., -100.,   22.,
+          -68.,   76.,   88.,  -22.,  -18.,    2.,  -22.,  -70.,    2.,   20.,
+         -148.,  -46.,  -62.]], device='cuda:0')
+  0%|                                                                                             | 0/1 [00:00<?, ?it/s]pgd early stop
+  0%|                                                                                             | 0/1 [00:03<?, ?it/s]
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[  48.,   62.,   92.,  342.,   46.,  352.,  158., -150., -130.,   32.,
+           -76.,  -86.,  -90., -110.,  -26.,    8.,   84., -152.,  -54.,  -50.,
+           -66.,  -50.,   24.,    6.,  -66.,   16.,  -62.,    4.,  -70.,   52.,
+           -54.,   58.,   30.,  -12.,  -56.,   -4.,  -16.,  -84.,  -12.,  -14.,
+           -98.,  -40.,  -80.],
+         [  48.,   62.,   92.,  342.,   46.,  352.,  158., -150., -130.,   32.,
+           -76.,  -86.,  -90., -110.,  -26.,    8.,   84., -152.,  -54.,  -50.,
+           -66.,  -50.,   24.,    6.,  -66.,   16.,  -62.,    4.,  -70.,   52.,
+           -54.,   58.,   30.,  -12.,  -56.,   -4.,  -16.,  -84.,  -12.,  -14.,
+           -98.,  -40.,  -80.]]], device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[294., 280., 250., 296., -10., 184., 492., 472., 310., 418.]]],
+       device='cuda:0')
+number of violation:  1
+Attack finished in 3.7864 seconds.
+PGD attack succeeded!
+Result: unsafe-pgd in 8.5998 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 1, vnnlib ID: 1 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Using onnx onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx
+Using vnnlib vnnlib/model_64_idx_7040_eps_3.00000.vnnlib
+Loading onnx ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx wih quirks {}
+Onnx optimization with flag: fix_gtrsb
+Found existed optimized onnx model at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx.optimized
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+12288 inputs and 43 outputs in vnnlib
+Last Softmax node found, peel it off
+Merging Sign node: %s BoundSign(name=/44, inputs=[/43], perturbed=False)
+Merging Sign node: %s BoundSign(name=/50, inputs=[/49], perturbed=False)
+Merging Sign node: %s BoundSign(name=/56, inputs=[/55], perturbed=False)
+Merging Sign node: %s BoundSign(name=/71, inputs=[/70], perturbed=False)
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=0.75, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[  18.,  100.,  234.,  420.,   -8.,  218.,   92., -164., -132.,   38.,
+         -110.,  -96.,  -84., -112.,  -20.,   34.,   50., -102.,  -12.,  -80.,
+          -56.,  -60.,    6.,  -48., -104.,    2., -100.,  -62.,  -92.,   18.,
+          -72.,   64.,   84.,  -26.,  -22.,   -2.,  -10.,  -70.,  -14.,   36.,
+         -148.,  -34.,  -66.]], device='cuda:0')
+  0%|                                                                                             | 0/1 [00:00<?, ?it/s]pgd early stop
+  0%|                                                                                             | 0/1 [00:04<?, ?it/s]
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[ -24.,   42.,  328.,  310.,  -62.,  160.,   82., -206., -178.,   16.,
+           -60.,   -6.,  -58.,  -50.,  -82.,   28.,   36., -132.,  -78.,  -26.,
+           -50.,  -38.,   -8.,   10.,  -30.,   -8.,  -90.,  -20., -154.,   24.,
+             2.,   70.,   30.,  -12.,   24.,   16.,  -32.,  -32.,   56.,   14.,
+           -54.,  -28.,  -60.],
+         [ -24.,   42.,  328.,  310.,  -62.,  160.,   82., -206., -178.,   16.,
+           -60.,   -6.,  -58.,  -50.,  -82.,   28.,   36., -132.,  -78.,  -26.,
+           -50.,  -38.,   -8.,   10.,  -30.,   -8.,  -90.,  -20., -154.,   24.,
+             2.,   70.,   30.,  -12.,   24.,   16.,  -32.,  -32.,   56.,   14.,
+           -54.,  -28.,  -60.]]], device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[334., 268., -18., 372., 150., 228., 516., 488., 294., 370.]]],
+       device='cuda:0')
+number of violation:  1
+Attack finished in 4.4996 seconds.
+PGD attack succeeded!
+Result: unsafe-pgd in 6.3967 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 2, vnnlib ID: 2 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Using onnx onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx
+Using vnnlib vnnlib/model_64_idx_7040_eps_5.00000.vnnlib
+Loading onnx ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx wih quirks {}
+Onnx optimization with flag: fix_gtrsb
+Found existed optimized onnx model at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx.optimized
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+12288 inputs and 43 outputs in vnnlib
+Last Softmax node found, peel it off
+Merging Sign node: %s BoundSign(name=/44, inputs=[/43], perturbed=False)
+Merging Sign node: %s BoundSign(name=/50, inputs=[/49], perturbed=False)
+Merging Sign node: %s BoundSign(name=/56, inputs=[/55], perturbed=False)
+Merging Sign node: %s BoundSign(name=/71, inputs=[/70], perturbed=False)
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=1.25, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[  18.,   92.,  238.,  416.,   -8.,  218.,   96., -184., -136.,   42.,
+         -110., -108.,  -84., -104.,   -8.,   30.,   66.,  -98.,   -8.,  -64.,
+          -56.,  -64.,   18.,  -48., -112.,    6., -104.,  -54.,  -92.,   14.,
+          -76.,   64.,   88.,  -14.,  -34.,  -10.,  -14.,  -74.,  -14.,   40.,
+         -144.,  -46.,  -78.]], device='cuda:0')
+  0%|                                                                                             | 0/1 [00:00<?, ?it/s]pgd early stop
+  0%|                                                                                             | 0/1 [00:01<?, ?it/s]
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[ -12.,   10.,  292.,  194.,  190.,  164.,   78.,  -62., -198.,   -4.,
+            20., -106.,    2.,  -54.,  -22.,  -12.,  -28., -136.,  -82.,  -62.,
+           -10.,  -26.,   24.,  -18.,  -22.,   56.,  -86.,    0., -182.,  -28.,
+           -70.,   34.,  -22.,   40.,  -64.,    4.,  -12.,    8.,   64.,   26.,
+           -22., -132.,  -52.],
+         [ -12.,   10.,  292.,  194.,  190.,  164.,   78.,  -62., -198.,   -4.,
+            20., -106.,    2.,  -54.,  -22.,  -12.,  -28., -136.,  -82.,  -62.,
+           -10.,  -26.,   24.,  -18.,  -22.,   56.,  -86.,    0., -182.,  -28.,
+           -70.,   34.,  -22.,   40.,  -64.,    4.,  -12.,    8.,   64.,   26.,
+           -22., -132.,  -52.]]], device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[206., 184., -98.,   4.,  30., 116., 256., 392., 198., 174.]]],
+       device='cuda:0')
+number of violation:  1
+Attack finished in 1.6426 seconds.
+PGD attack succeeded!
+Result: unsafe-pgd in 3.7161 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 3, vnnlib ID: 3 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Using onnx onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx
+Using vnnlib vnnlib/model_64_idx_7040_eps_10.00000.vnnlib
+Loading onnx ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx wih quirks {}
+Onnx optimization with flag: fix_gtrsb
+Found existed optimized onnx model at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx.optimized
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+12288 inputs and 43 outputs in vnnlib
+Last Softmax node found, peel it off
+Merging Sign node: %s BoundSign(name=/44, inputs=[/43], perturbed=False)
+Merging Sign node: %s BoundSign(name=/50, inputs=[/49], perturbed=False)
+Merging Sign node: %s BoundSign(name=/56, inputs=[/55], perturbed=False)
+Merging Sign node: %s BoundSign(name=/71, inputs=[/70], perturbed=False)
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=2.5, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[  24.,   94.,  236.,  418.,    2.,  220.,   82., -166., -162.,   64.,
+         -100.,  -94.,  -62., -110.,    6.,   24.,   40., -116.,  -22.,  -74.,
+          -66.,  -58.,    4.,  -74.,  -90.,   12., -106.,  -68., -118.,   20.,
+          -74.,   66.,   78.,  -16.,  -16.,    8.,    0.,  -80.,    0.,   34.,
+         -154.,  -36.,  -60.]], device='cuda:0')
+  0%|                                                                                             | 0/1 [00:00<?, ?it/s]pgd early stop
+  0%|                                                                                             | 0/1 [00:01<?, ?it/s]
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[ -78.,  -24.,  306.,  220.,    0.,   86.,  144.,  -44., -116.,  -50.,
+           -74.,  -88., -104.,  -12.,   -8.,  -82., -258., -130.,    8.,  -48.,
+           -40.,   -4.,   38.,   64.,  -12.,   50.,  -56.,   14.,   32.,   38.,
+            16.,   56.,  -36.,  -98.,  -70.,  -74.,  -42.,   22.,   50.,  -16.,
+            48.,  -58.,   -2.],
+         [ -78.,  -24.,  306.,  220.,    0.,   86.,  144.,  -44., -116.,  -50.,
+           -74.,  -88., -104.,  -12.,   -8.,  -82., -258., -130.,    8.,  -48.,
+           -40.,   -4.,   38.,   64.,  -12.,   50.,  -56.,   14.,   32.,   38.,
+            16.,   56.,  -36.,  -98.,  -70.,  -74.,  -42.,   22.,   50.,  -16.,
+            48.,  -58.,   -2.]]], device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[298., 244., -86., 220., 134.,  76., 264., 336., 270., 294.]]],
+       device='cuda:0')
+number of violation:  1
+Attack finished in 1.6231 seconds.
+PGD attack succeeded!
+Result: unsafe-pgd in 3.1714 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 4, vnnlib ID: 4 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Using onnx onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx
+Using vnnlib vnnlib/model_64_idx_7040_eps_15.00000.vnnlib
+Loading onnx ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx wih quirks {}
+Onnx optimization with flag: fix_gtrsb
+Found existed optimized onnx model at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx.optimized
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+12288 inputs and 43 outputs in vnnlib
+Last Softmax node found, peel it off
+Merging Sign node: %s BoundSign(name=/44, inputs=[/43], perturbed=False)
+Merging Sign node: %s BoundSign(name=/50, inputs=[/49], perturbed=False)
+Merging Sign node: %s BoundSign(name=/56, inputs=[/55], perturbed=False)
+Merging Sign node: %s BoundSign(name=/71, inputs=[/70], perturbed=False)
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=3.75, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[  12.,  102.,  216.,  438.,  -14.,  216.,   90., -166., -126.,   52.,
+          -92.,  -98.,  -66., -106.,   -2.,   44.,   52., -112.,  -34.,  -78.,
+          -58.,  -46.,   32.,  -38., -122.,   12., -126.,  -68.,  -86.,   28.,
+          -50.,   74.,  102.,  -36.,  -28.,    0.,   -8.,  -92.,    0.,   42.,
+         -146.,  -20.,  -52.]], device='cuda:0')
+  0%|                                                                                             | 0/1 [00:00<?, ?it/s]pgd early stop
+  0%|                                                                                             | 0/1 [00:00<?, ?it/s]
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[  24.,  142.,  144.,  326.,   42.,  364.,   98.,  -58., -130.,   20.,
+            -4.,  -86.,  -78.,  -90.,  -50.,    0.,  104., -116.,  -66.,  -38.,
+           -34.,   -6.,  -52.,   30.,  -26.,   16., -110.,  -16., -106.,  -72.,
+           -54.,   66.,   42.,  -16.,  -72.,    0.,  -16.,  -56.,  -48.,  -18.,
+          -150.,  -76.,  -24.],
+         [  24.,  142.,  144.,  326.,   42.,  364.,   98.,  -58., -130.,   20.,
+            -4.,  -86.,  -78.,  -90.,  -50.,    0.,  104., -116.,  -66.,  -38.,
+           -34.,   -6.,  -52.,   30.,  -26.,   16., -110.,  -16., -106.,  -72.,
+           -54.,   66.,   42.,  -16.,  -72.,    0.,  -16.,  -56.,  -48.,  -18.,
+          -150.,  -76.,  -24.]]], device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[302., 184., 182., 284., -38., 228., 384., 456., 306., 330.]]],
+       device='cuda:0')
+number of violation:  1
+Attack finished in 0.8168 seconds.
+PGD attack succeeded!
+Result: unsafe-pgd in 2.3219 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 5, vnnlib ID: 5 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Using onnx onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx
+Using vnnlib vnnlib/model_64_idx_8258_eps_1.00000.vnnlib
+Loading onnx ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx wih quirks {}
+Onnx optimization with flag: fix_gtrsb
+Found existed optimized onnx model at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx.optimized
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+12288 inputs and 43 outputs in vnnlib
+Last Softmax node found, peel it off
+Merging Sign node: %s BoundSign(name=/44, inputs=[/43], perturbed=False)
+Merging Sign node: %s BoundSign(name=/50, inputs=[/49], perturbed=False)
+Merging Sign node: %s BoundSign(name=/56, inputs=[/55], perturbed=False)
+Merging Sign node: %s BoundSign(name=/71, inputs=[/70], perturbed=False)
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=0.25, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[ -94., -160.,   30.,   12.,   88.,  -50.,  -76.,  -64., -144.,  -22.,
+           -6.,  -44.,   60.,   96.,   48.,   22.,   -6.,  -62.,  -12.,  -36.,
+          -72.,  -20.,  -70., -148.,   84.,  130.,  140.,   22.,  -80.,  -58.,
+          -68., -112.,   28.,  486.,   42.,  158.,   70.,  110.,  -46.,  176.,
+           40.,  -78.,  -82.]], device='cuda:0')
+100%|█████████████████████████████████████████████████████████████████████████████████████| 1/1 [01:19<00:00, 79.00s/it]
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[-122., -124.,   18.,  -60.,  124.,  -42.,  -68., -104., -204.,  -42.,
+            26.,   -4.,   32.,  120.,   44.,  -62.,  -22.,  -82.,   56.,   48.,
+           -60.,   -4.,  -14., -104.,   84.,  318.,   84.,   62.,  -12., -126.,
+           -28.,  -80.,   40.,  334.,    6.,  146.,  134.,   26.,  -66.,  124.,
+           -24.,  -38.,  -46.],
+         [-122., -124.,   18.,  -60.,  124.,  -42.,  -68., -104., -204.,  -42.,
+            26.,   -4.,   32.,  120.,   44.,  -62.,  -22.,  -82.,   56.,   48.,
+           -60.,   -4.,  -14., -104.,   84.,  318.,   84.,   62.,  -12., -126.,
+           -28.,  -80.,   40.,  334.,    6.,  146.,  134.,   26.,  -66.,  124.,
+           -24.,  -38.,  -46.]]], device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[456., 458., 316., 394., 210., 376., 402., 438., 538., 376.]]],
+       device='cuda:0')
+number of violation:  0
+Attack finished in 79.0339 seconds.
+PGD attack failed
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=0.25, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[ -94., -160.,   30.,   12.,   88.,  -50.,  -76.,  -64., -144.,  -22.,
+           -6.,  -44.,   60.,   96.,   48.,   22.,   -6.,  -62.,  -12.,  -36.,
+          -72.,  -20.,  -70., -148.,   84.,  130.,  140.,   22.,  -80.,  -58.,
+          -68., -112.,   28.,  486.,   42.,  158.,   70.,  110.,  -46.,  176.,
+           40.,  -78.,  -82.]], device='cuda:0')
+100%|█████████████████████████████████████████████████████████████████████████████████████| 1/1 [01:18<00:00, 78.47s/it]
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[-100., -134.,   40.,   -6.,   62.,  -44.,  -94., -110., -150.,  -40.,
+            40.,  -34.,   78.,   74.,   30.,    0.,   32.,  -76.,   -2.,   10.,
+           -10.,  -26.,  -60., -122.,   62.,  148.,  114.,   28.,  -34.,  -52.,
+           -62., -102.,   34.,  408.,    8.,  220.,   84.,   88.,  -80.,  158.,
+            -6.,  -76.,  -76.],
+         [-100., -134.,   40.,   -6.,   62.,  -44.,  -94., -110., -150.,  -40.,
+            40.,  -34.,   78.,   74.,   30.,    0.,   32.,  -76.,   -2.,   10.,
+           -10.,  -26.,  -60., -122.,   62.,  148.,  114.,   28.,  -34.,  -52.,
+           -62., -102.,   34.,  408.,    8.,  220.,   84.,   88.,  -80.,  158.,
+            -6.,  -76.,  -76.]]], device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[508., 542., 368., 414., 346., 452., 502., 518., 558., 448.]]],
+       device='cuda:0')
+number of violation:  0
+Attack finished in 78.5327 seconds.
+PGD attack failed
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=0.25, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[ -94., -160.,   30.,   12.,   88.,  -50.,  -76.,  -64., -144.,  -22.,
+           -6.,  -44.,   60.,   96.,   48.,   22.,   -6.,  -62.,  -12.,  -36.,
+          -72.,  -20.,  -70., -148.,   84.,  130.,  140.,   22.,  -80.,  -58.,
+          -68., -112.,   28.,  486.,   42.,  158.,   70.,  110.,  -46.,  176.,
+           40.,  -78.,  -82.]], device='cuda:0')
+100%|█████████████████████████████████████████████████████████████████████████████████████| 1/1 [01:18<00:00, 78.39s/it]
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[ -78.,  -96.,   26.,    4.,   44.,  -74., -140., -116., -136.,    6.,
+           -14.,  -68.,   84.,   92.,   28.,    2.,   38.,  -70.,  -36.,    8.,
+           -24.,  -24.,  -42., -128.,   80.,  174.,   72.,   18.,  -32.,  -62.,
+           -68., -144.,   48.,  338.,   38.,  334.,  110.,   54.,  -90.,  120.,
+           -24.,   -2.,  -66.],
+         [ -78.,  -96.,   26.,    4.,   44.,  -74., -140., -116., -136.,    6.,
+           -14.,  -68.,   84.,   92.,   28.,    2.,   38.,  -70.,  -36.,    8.,
+           -24.,  -24.,  -42., -128.,   80.,  174.,   72.,   18.,  -32.,  -62.,
+           -68., -144.,   48.,  338.,   38.,  334.,  110.,   54.,  -90.,  120.,
+           -24.,   -2.,  -66.]]], device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[416., 434., 312., 334., 294., 412., 478., 454., 474., 332.]]],
+       device='cuda:0')
+number of violation:  0
+Attack finished in 78.4288 seconds.
+PGD attack failed
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=0.25, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[ -94., -160.,   30.,   12.,   88.,  -50.,  -76.,  -64., -144.,  -22.,
+           -6.,  -44.,   60.,   96.,   48.,   22.,   -6.,  -62.,  -12.,  -36.,
+          -72.,  -20.,  -70., -148.,   84.,  130.,  140.,   22.,  -80.,  -58.,
+          -68., -112.,   28.,  486.,   42.,  158.,   70.,  110.,  -46.,  176.,
+           40.,  -78.,  -82.]], device='cuda:0')
+100%|█████████████████████████████████████████████████████████████████████████████████████| 1/1 [01:20<00:00, 80.50s/it]
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[-122., -128.,   50.,   28.,   32.,  -18.,  -92., -108., -120.,  -14.,
+            30.,  -68.,   88.,   84.,   12.,   10.,   14.,  -94.,  -12.,    0.,
+           -24.,  -32.,  -66., -116.,   68.,  134.,  112.,   18.,  -20.,  -46.,
+           -72., -100.,   44.,  422.,   26.,  218.,   90.,   62.,  -46.,  164.,
+           -16.,  -74.,  -70.],
+         [-122., -128.,   50.,   28.,   32.,  -18.,  -92., -108., -120.,  -14.,
+            30.,  -68.,   88.,   84.,   12.,   10.,   14.,  -94.,  -12.,    0.,
+           -24.,  -32.,  -66., -116.,   68.,  134.,  112.,   18.,  -20.,  -46.,
+           -72., -100.,   44.,  422.,   26.,  218.,   90.,   62.,  -46.,  164.,
+           -16.,  -74.,  -70.]]], device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[544., 550., 372., 394., 390., 440., 514., 530., 542., 436.]]],
+       device='cuda:0')
+number of violation:  0
+Attack finished in 80.5432 seconds.
+PGD attack failed
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=0.25, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[ -94., -160.,   30.,   12.,   88.,  -50.,  -76.,  -64., -144.,  -22.,
+           -6.,  -44.,   60.,   96.,   48.,   22.,   -6.,  -62.,  -12.,  -36.,
+          -72.,  -20.,  -70., -148.,   84.,  130.,  140.,   22.,  -80.,  -58.,
+          -68., -112.,   28.,  486.,   42.,  158.,   70.,  110.,  -46.,  176.,
+           40.,  -78.,  -82.]], device='cuda:0')
+100%|█████████████████████████████████████████████████████████████████████████████████████| 1/1 [01:38<00:00, 98.25s/it]
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[-110., -124.,   30.,   20.,   24., -102., -128., -144., -124.,   30.,
+           -14.,  -84.,  108.,   92.,    8.,  -10.,   34.,  -42.,  -16.,   24.,
+            28.,  -48.,  -34.,  -96.,   80.,  198.,  104.,   10.,   -8.,  -50.,
+           -40., -128.,   36.,  334.,   42.,  318.,  114.,   50.,  -98.,  140.,
+           -36.,  -10.,  -70.],
+         [-110., -124.,   30.,   20.,   24., -102., -128., -144., -124.,   30.,
+           -14.,  -84.,  108.,   92.,    8.,  -10.,   34.,  -42.,  -16.,   24.,
+            28.,  -48.,  -34.,  -96.,   80.,  198.,  104.,   10.,   -8.,  -50.,
+           -40., -128.,   36.,  334.,   42.,  318.,  114.,   50.,  -98.,  140.,
+           -36.,  -10.,  -70.]]], device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[444., 458., 304., 314., 310., 436., 462., 478., 458., 304.]]],
+       device='cuda:0')
+number of violation:  0
+Attack finished in 98.2867 seconds.
+PGD attack failed
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=0.25, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[ -94., -160.,   30.,   12.,   88.,  -50.,  -76.,  -64., -144.,  -22.,
+           -6.,  -44.,   60.,   96.,   48.,   22.,   -6.,  -62.,  -12.,  -36.,
+          -72.,  -20.,  -70., -148.,   84.,  130.,  140.,   22.,  -80.,  -58.,
+          -68., -112.,   28.,  486.,   42.,  158.,   70.,  110.,  -46.,  176.,
+           40.,  -78.,  -82.]], device='cuda:0')
+100%|█████████████████████████████████████████████████████████████████████████████████████| 1/1 [01:33<00:00, 93.45s/it]
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[-106., -140.,   46.,   20.,   72.,  -22.,  -92., -120., -156.,  -38.,
+            38.,  -28.,   60.,   64.,   24.,  -38.,    2.,  -90.,   56.,   28.,
+           -36.,    0.,  -70., -132.,   72.,  130.,   92.,   46.,  -40.,  -42.,
+           -68.,  -92.,   16.,  406.,   10.,  214.,   82.,   78.,  -82.,  156.,
+           -20.,  -70.,  -70.],
+         [-106., -140.,   46.,   20.,   72.,  -22.,  -92., -120., -156.,  -38.,
+            38.,  -28.,   60.,   64.,   24.,  -38.,    2.,  -90.,   56.,   28.,
+           -36.,    0.,  -70., -132.,   72.,  130.,   92.,   46.,  -40.,  -42.,
+           -68.,  -92.,   16.,  406.,   10.,  214.,   82.,   78.,  -82.,  156.,
+           -20.,  -70.,  -70.]]], device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[512., 546., 360., 386., 334., 428., 498., 526., 562., 444.]]],
+       device='cuda:0')
+number of violation:  0
+Attack finished in 93.4875 seconds.
+PGD attack failed
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=0.25, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[ -94., -160.,   30.,   12.,   88.,  -50.,  -76.,  -64., -144.,  -22.,
+           -6.,  -44.,   60.,   96.,   48.,   22.,   -6.,  -62.,  -12.,  -36.,
+          -72.,  -20.,  -70., -148.,   84.,  130.,  140.,   22.,  -80.,  -58.,
+          -68., -112.,   28.,  486.,   42.,  158.,   70.,  110.,  -46.,  176.,
+           40.,  -78.,  -82.]], device='cuda:0')
+100%|█████████████████████████████████████████████████████████████████████████████████████| 1/1 [01:32<00:00, 92.57s/it]
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[-112., -146.,   60.,  -26.,   70.,  -28.,  -82.,  -90., -166.,  -64.,
+            32.,  -46.,   50.,  150.,   42.,  -24.,  -32., -108.,  -26.,   10.,
+           -50.,    6.,   -8.,  -70.,   58.,  308.,   78.,   52.,    2., -120.,
+           -10.,  -98.,   38.,  328.,  -32.,  148.,  112.,    4.,  -44.,  146.,
+           -74.,  -60.,  -48.],
+         [-112., -146.,   60.,  -26.,   70.,  -28.,  -82.,  -90., -166.,  -64.,
+            32.,  -46.,   50.,  150.,   42.,  -24.,  -32., -108.,  -26.,   10.,
+           -50.,    6.,   -8.,  -70.,   58.,  308.,   78.,   52.,    2., -120.,
+           -10.,  -98.,   38.,  328.,  -32.,  148.,  112.,    4.,  -44.,  146.,
+           -74.,  -60.,  -48.]]], device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[440., 474., 268., 354., 258., 356., 410., 418., 494., 392.]]],
+       device='cuda:0')
+number of violation:  0
+Attack finished in 92.6086 seconds.
+PGD attack failed
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=0.25, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[ -94., -160.,   30.,   12.,   88.,  -50.,  -76.,  -64., -144.,  -22.,
+           -6.,  -44.,   60.,   96.,   48.,   22.,   -6.,  -62.,  -12.,  -36.,
+          -72.,  -20.,  -70., -148.,   84.,  130.,  140.,   22.,  -80.,  -58.,
+          -68., -112.,   28.,  486.,   42.,  158.,   70.,  110.,  -46.,  176.,
+           40.,  -78.,  -82.]], device='cuda:0')
+100%|█████████████████████████████████████████████████████████████████████████████████████| 1/1 [01:31<00:00, 91.17s/it]
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[-106., -156.,   22.,    0.,   64.,  -50.,  -96., -124., -132.,  -34.,
+            22.,  -20.,   76.,   68.,   56.,    6.,   26.,  -66.,    4.,   28.,
+           -56.,  -40.,  -58., -156.,   84.,  142.,   88.,   30.,   -8.,  -62.,
+           -80., -104.,   36.,  406.,   14.,  210.,  110.,   50.,  -62.,  160.,
+           -20.,  -58.,  -66.],
+         [-106., -156.,   22.,    0.,   64.,  -50.,  -96., -124., -132.,  -34.,
+            22.,  -20.,   76.,   68.,   56.,    6.,   26.,  -66.,    4.,   28.,
+           -56.,  -40.,  -58., -156.,   84.,  142.,   88.,   30.,   -8.,  -62.,
+           -80., -104.,   36.,  406.,   14.,  210.,  110.,   50.,  -62.,  160.,
+           -20.,  -58.,  -66.]]], device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[512., 562., 384., 406., 342., 456., 502., 530., 538., 440.]]],
+       device='cuda:0')
+number of violation:  0
+Attack finished in 91.2129 seconds.
+PGD attack failed
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=0.25, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[ -94., -160.,   30.,   12.,   88.,  -50.,  -76.,  -64., -144.,  -22.,
+           -6.,  -44.,   60.,   96.,   48.,   22.,   -6.,  -62.,  -12.,  -36.,
+          -72.,  -20.,  -70., -148.,   84.,  130.,  140.,   22.,  -80.,  -58.,
+          -68., -112.,   28.,  486.,   42.,  158.,   70.,  110.,  -46.,  176.,
+           40.,  -78.,  -82.]], device='cuda:0')
+100%|█████████████████████████████████████████████████████████████████████████████████████| 1/1 [01:34<00:00, 94.78s/it]
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[ -74., -124.,   14.,   28.,   24., -146., -160., -132., -116.,   22.,
+           -30.,  -60.,   92.,  104.,   36.,   -6.,   30.,   -2.,  -28.,   24.,
+           -12.,   12.,  -14., -104.,   76.,  174.,   76.,   26.,  -40.,  -18.,
+           -92., -124.,   52.,  354.,   54.,  334.,  106.,   90.,  -86.,  160.,
+           -20.,    2.,  -82.],
+         [ -74., -124.,   14.,   28.,   24., -146., -160., -132., -116.,   22.,
+           -30.,  -60.,   92.,  104.,   36.,   -6.,   30.,   -2.,  -28.,   24.,
+           -12.,   12.,  -14., -104.,   76.,  174.,   76.,   26.,  -40.,  -18.,
+           -92., -124.,   52.,  354.,   54.,  334.,  106.,   90.,  -86.,  160.,
+           -20.,    2.,  -82.]]], device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[428., 478., 340., 326., 330., 500., 514., 486., 470., 332.]]],
+       device='cuda:0')
+number of violation:  0
+Attack finished in 94.8215 seconds.
+PGD attack failed
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=0.25, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[ -94., -160.,   30.,   12.,   88.,  -50.,  -76.,  -64., -144.,  -22.,
+           -6.,  -44.,   60.,   96.,   48.,   22.,   -6.,  -62.,  -12.,  -36.,
+          -72.,  -20.,  -70., -148.,   84.,  130.,  140.,   22.,  -80.,  -58.,
+          -68., -112.,   28.,  486.,   42.,  158.,   70.,  110.,  -46.,  176.,
+           40.,  -78.,  -82.]], device='cuda:0')
+100%|█████████████████████████████████████████████████████████████████████████████████████| 1/1 [01:38<00:00, 98.95s/it]
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[-106., -156.,   46.,   28.,   84.,  -18., -104.,  -84., -108.,  -30.,
+            22.,  -52.,   56.,   92.,   36.,  -18.,    6., -102.,   16.,    8.,
+           -28.,  -24.,  -46., -108.,  100.,  146.,  108.,   30.,   -8.,  -50.,
+           -64., -108.,   56.,  410.,   -2.,  210.,   94.,   70.,  -50.,  136.,
+           -16.,  -86.,  -70.],
+         [-106., -156.,   46.,   28.,   84.,  -18., -104.,  -84., -108.,  -30.,
+            22.,  -52.,   56.,   92.,   36.,  -18.,    6., -102.,   16.,    8.,
+           -28.,  -24.,  -46., -108.,  100.,  146.,  108.,   30.,   -8.,  -50.,
+           -64., -108.,   56.,  410.,   -2.,  210.,   94.,   70.,  -50.,  136.,
+           -16.,  -86.,  -70.]]], device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[516., 566., 364., 382., 326., 428., 514., 494., 518., 440.]]],
+       device='cuda:0')
+number of violation:  0
+Attack finished in 98.9989 seconds.
+PGD attack failed
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=0.25, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[ -94., -160.,   30.,   12.,   88.,  -50.,  -76.,  -64., -144.,  -22.,
+           -6.,  -44.,   60.,   96.,   48.,   22.,   -6.,  -62.,  -12.,  -36.,
+          -72.,  -20.,  -70., -148.,   84.,  130.,  140.,   22.,  -80.,  -58.,
+          -68., -112.,   28.,  486.,   42.,  158.,   70.,  110.,  -46.,  176.,
+           40.,  -78.,  -82.]], device='cuda:0')
+100%|█████████████████████████████████████████████████████████████████████████████████████| 1/1 [01:36<00:00, 96.68s/it]
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[-160., -146.,   52.,  -18.,   78.,  -32.,  -82.,  -90., -194.,  -44.,
+            16.,  -26.,   78.,  114.,   18.,  -60.,  -40.,  -64.,   10.,   50.,
+           -58.,   -2.,  -32.,  -78.,   54.,  320.,  106.,   40.,  -14., -120.,
+           -38.,  -62.,   30.,  336.,  -16.,  136.,  116.,   36.,  -64.,  162.,
+           -58.,  -60.,  -32.],
+         [-160., -146.,   52.,  -18.,   78.,  -32.,  -82.,  -90., -194.,  -44.,
+            16.,  -26.,   78.,  114.,   18.,  -60.,  -40.,  -64.,   10.,   50.,
+           -58.,   -2.,  -32.,  -78.,   54.,  320.,  106.,   40.,  -14., -120.,
+           -38.,  -62.,   30.,  336.,  -16.,  136.,  116.,   36.,  -64.,  162.,
+           -58.,  -60.,  -32.]]], device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[496., 482., 284., 354., 258., 368., 418., 426., 530., 380.]]],
+       device='cuda:0')
+number of violation:  0
+Attack finished in 96.7176 seconds.
+PGD attack failed
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=0.25, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[ -94., -160.,   30.,   12.,   88.,  -50.,  -76.,  -64., -144.,  -22.,
+           -6.,  -44.,   60.,   96.,   48.,   22.,   -6.,  -62.,  -12.,  -36.,
+          -72.,  -20.,  -70., -148.,   84.,  130.,  140.,   22.,  -80.,  -58.,
+          -68., -112.,   28.,  486.,   42.,  158.,   70.,  110.,  -46.,  176.,
+           40.,  -78.,  -82.]], device='cuda:0')
+100%|█████████████████████████████████████████████████████████████████████████████████████| 1/1 [01:33<00:00, 93.29s/it]
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[ -80., -126.,    8.,    6.,   46.,  -52.,  -98., -134., -150.,  -40.,
+            32.,  -42.,   70.,   90.,   34.,  -16.,    8.,  -48.,  -10.,   26.,
+           -18.,  -22.,  -72., -114.,   82.,  152.,  114.,   36.,  -10.,  -28.,
+           -46., -106.,   34.,  400.,   28.,  208.,   84.,   68.,  -76.,  158.,
+           -26.,  -60.,  -64.],
+         [ -80., -126.,    8.,    6.,   46.,  -52.,  -98., -134., -150.,  -40.,
+            32.,  -42.,   70.,   90.,   34.,  -16.,    8.,  -48.,  -10.,   26.,
+           -18.,  -22.,  -72., -114.,   82.,  152.,  114.,   36.,  -10.,  -28.,
+           -46., -106.,   34.,  400.,   28.,  208.,   84.,   68.,  -76.,  158.,
+           -26.,  -60.,  -64.]]], device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[480., 526., 392., 394., 354., 452., 498., 534., 550., 440.]]],
+       device='cuda:0')
+number of violation:  0
+Attack finished in 93.3337 seconds.
+PGD attack failed
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=0.25, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[ -94., -160.,   30.,   12.,   88.,  -50.,  -76.,  -64., -144.,  -22.,
+           -6.,  -44.,   60.,   96.,   48.,   22.,   -6.,  -62.,  -12.,  -36.,
+          -72.,  -20.,  -70., -148.,   84.,  130.,  140.,   22.,  -80.,  -58.,
+          -68., -112.,   28.,  486.,   42.,  158.,   70.,  110.,  -46.,  176.,
+           40.,  -78.,  -82.]], device='cuda:0')
+100%|█████████████████████████████████████████████████████████████████████████████████████| 1/1 [01:32<00:00, 92.47s/it]
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[-104., -162.,   20.,  -30.,   78.,  -56., -118.,  -62., -194.,  -40.,
+            48.,    6.,   62.,  146.,   42.,  -64.,  -16.,  -92.,  -10.,   50.,
+           -70.,  -10.,  -36.,  -82.,   62.,  320.,  102.,   40.,   10., -112.,
+           -30.,  -74.,   18.,  344.,  -16.,  132.,  100.,   28.,  -60.,  146.,
+           -70.,  -56.,  -68.],
+         [-104., -162.,   20.,  -30.,   78.,  -56., -118.,  -62., -194.,  -40.,
+            48.,    6.,   62.,  146.,   42.,  -64.,  -16.,  -92.,  -10.,   50.,
+           -70.,  -10.,  -36.,  -82.,   62.,  320.,  102.,   40.,   10., -112.,
+           -30.,  -74.,   18.,  344.,  -16.,  132.,  100.,   28.,  -60.,  146.,
+           -70.,  -56.,  -68.]]], device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[448., 506., 324., 374., 266., 400., 462., 406., 538., 384.]]],
+       device='cuda:0')
+number of violation:  0
+Attack finished in 92.5072 seconds.
+PGD attack failed
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=0.25, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[ -94., -160.,   30.,   12.,   88.,  -50.,  -76.,  -64., -144.,  -22.,
+           -6.,  -44.,   60.,   96.,   48.,   22.,   -6.,  -62.,  -12.,  -36.,
+          -72.,  -20.,  -70., -148.,   84.,  130.,  140.,   22.,  -80.,  -58.,
+          -68., -112.,   28.,  486.,   42.,  158.,   70.,  110.,  -46.,  176.,
+           40.,  -78.,  -82.]], device='cuda:0')
+100%|█████████████████████████████████████████████████████████████████████████████████████| 1/1 [01:33<00:00, 93.75s/it]
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[-134., -136.,   38.,    4.,   88.,  -46., -104.,  -76., -104.,  -22.,
+            14.,  -24.,   72.,  100.,   56.,  -34.,  -14.,  -74.,   24.,   -4.,
+           -44.,  -16.,  -50., -136.,   64.,  162.,   92.,   42.,  -20.,  -78.,
+           -96., -116.,   36.,  410.,   18.,  214.,  114.,   78.,  -78.,  148.,
+             8.,  -66.,  -82.],
+         [-134., -136.,   38.,    4.,   88.,  -46., -104.,  -76., -104.,  -22.,
+            14.,  -24.,   72.,  100.,   56.,  -34.,  -14.,  -74.,   24.,   -4.,
+           -44.,  -16.,  -50., -136.,   64.,  162.,   92.,   42.,  -20.,  -78.,
+           -96., -116.,   36.,  410.,   18.,  214.,  114.,   78.,  -78.,  148.,
+             8.,  -66.,  -82.]]], device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[544., 546., 372., 406., 322., 456., 514., 486., 514., 432.]]],
+       device='cuda:0')
+number of violation:  0
+Attack finished in 93.7888 seconds.
+PGD attack failed
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=0.25, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[ -94., -160.,   30.,   12.,   88.,  -50.,  -76.,  -64., -144.,  -22.,
+           -6.,  -44.,   60.,   96.,   48.,   22.,   -6.,  -62.,  -12.,  -36.,
+          -72.,  -20.,  -70., -148.,   84.,  130.,  140.,   22.,  -80.,  -58.,
+          -68., -112.,   28.,  486.,   42.,  158.,   70.,  110.,  -46.,  176.,
+           40.,  -78.,  -82.]], device='cuda:0')
+100%|█████████████████████████████████████████████████████████████████████████████████████| 1/1 [01:34<00:00, 94.63s/it]
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[-122., -128.,   70.,  -32.,   84.,  -42.,  -68.,  -72., -212.,  -62.,
+            18.,  -28.,   28.,  132.,   40.,  -74.,  -50.,  -94.,   16.,   40.,
+          -104.,   40.,  -38.,  -88.,   88.,  322.,   76.,   62.,  -16., -102.,
+           -44.,  -96.,   52.,  346.,   -6.,  134.,  138.,   38.,  -66.,  124.,
+           -20.,  -50.,  -38.],
+         [-122., -128.,   70.,  -32.,   84.,  -42.,  -68.,  -72., -212.,  -62.,
+            18.,  -28.,   28.,  132.,   40.,  -74.,  -50.,  -94.,   16.,   40.,
+          -104.,   40.,  -38.,  -88.,   88.,  322.,   76.,   62.,  -16., -102.,
+           -44.,  -96.,   52.,  346.,   -6.,  134.,  138.,   38.,  -66.,  124.,
+           -20.,  -50.,  -38.]]], device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[468., 474., 276., 378., 262., 388., 414., 418., 558., 408.]]],
+       device='cuda:0')
+number of violation:  0
+Attack finished in 94.6733 seconds.
+PGD attack failed
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=0.25, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[ -94., -160.,   30.,   12.,   88.,  -50.,  -76.,  -64., -144.,  -22.,
+           -6.,  -44.,   60.,   96.,   48.,   22.,   -6.,  -62.,  -12.,  -36.,
+          -72.,  -20.,  -70., -148.,   84.,  130.,  140.,   22.,  -80.,  -58.,
+          -68., -112.,   28.,  486.,   42.,  158.,   70.,  110.,  -46.,  176.,
+           40.,  -78.,  -82.]], device='cuda:0')
+100%|████████████████████████████████████████████████████████████████████████████████████| 1/1 [01:40<00:00, 100.83s/it]
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[-130., -132.,   50.,   20.,   72.,  -34., -124.,  -80., -108.,  -26.,
+             6.,  -40.,   88.,   96.,   28.,  -26.,    2.,  -54.,  -16.,    0.,
+           -28.,  -16.,  -66., -112.,   76.,  166.,   96.,   22.,  -48.,  -58.,
+           -76., -116.,   36.,  414.,   30.,  222.,   94.,   74.,  -74.,  152.,
+            -4.,  -38.,  -90.],
+         [-130., -132.,   50.,   20.,   72.,  -34., -124.,  -80., -108.,  -26.,
+             6.,  -40.,   88.,   96.,   28.,  -26.,    2.,  -54.,  -16.,    0.,
+           -28.,  -16.,  -66., -112.,   76.,  166.,   96.,   22.,  -48.,  -58.,
+           -76., -116.,   36.,  414.,   30.,  222.,   94.,   74.,  -74.,  152.,
+            -4.,  -38.,  -90.]]], device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[544., 546., 364., 394., 342., 448., 538., 494., 522., 440.]]],
+       device='cuda:0')
+number of violation:  0
+Attack finished in 100.8726 seconds.
+PGD attack failed
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=0.25, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[ -94., -160.,   30.,   12.,   88.,  -50.,  -76.,  -64., -144.,  -22.,
+           -6.,  -44.,   60.,   96.,   48.,   22.,   -6.,  -62.,  -12.,  -36.,
+          -72.,  -20.,  -70., -148.,   84.,  130.,  140.,   22.,  -80.,  -58.,
+          -68., -112.,   28.,  486.,   42.,  158.,   70.,  110.,  -46.,  176.,
+           40.,  -78.,  -82.]], device='cuda:0')
+100%|█████████████████████████████████████████████████████████████████████████████████████| 1/1 [01:33<00:00, 93.64s/it]
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[-118., -124.,   58.,  -32.,   76.,  -70.,  -72., -116., -192., -102.,
+            14.,  -20.,   36.,  132.,   44.,  -66.,  -30.,  -62.,   28.,   76.,
+          -100.,   -4.,  -26., -104.,   56.,  334.,  116.,   50.,  -20., -126.,
+           -36.,  -40.,   16.,  362.,   -6.,  118.,  106.,   50.,  -50.,  136.,
+           -56.,  -58.,  -66.],
+         [-118., -124.,   58.,  -32.,   76.,  -70.,  -72., -116., -192., -102.,
+            14.,  -20.,   36.,  132.,   44.,  -66.,  -30.,  -62.,   28.,   76.,
+          -100.,   -4.,  -26., -104.,   56.,  334.,  116.,   50.,  -20., -126.,
+           -36.,  -40.,   16.,  362.,   -6.,  118.,  106.,   50.,  -50.,  136.,
+           -56.,  -58.,  -66.]]], device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[480., 486., 304., 394., 286., 432., 434., 478., 554., 464.]]],
+       device='cuda:0')
+number of violation:  0
+Attack finished in 93.6803 seconds.
+PGD attack failed
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=0.25, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[ -94., -160.,   30.,   12.,   88.,  -50.,  -76.,  -64., -144.,  -22.,
+           -6.,  -44.,   60.,   96.,   48.,   22.,   -6.,  -62.,  -12.,  -36.,
+          -72.,  -20.,  -70., -148.,   84.,  130.,  140.,   22.,  -80.,  -58.,
+          -68., -112.,   28.,  486.,   42.,  158.,   70.,  110.,  -46.,  176.,
+           40.,  -78.,  -82.]], device='cuda:0')
+100%|█████████████████████████████████████████████████████████████████████████████████████| 1/1 [01:38<00:00, 98.14s/it]
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[ -80., -138.,   52.,   26.,   82.,  -12.,  -98., -122., -138.,  -48.,
+            24.,  -46.,   70.,   94.,   38.,    8.,    0.,  -80.,   26.,   18.,
+           -38.,  -38.,  -48., -138.,   74.,  136.,  138.,   24.,  -50.,  -40.,
+           -78., -110.,   22.,  408.,   28.,  212.,   88.,   60.,  -56.,  158.,
+           -22.,  -80.,  -64.],
+         [ -80., -138.,   52.,   26.,   82.,  -12.,  -98., -122., -138.,  -48.,
+            24.,  -46.,   70.,   94.,   38.,    8.,    0.,  -80.,   26.,   18.,
+           -38.,  -38.,  -48., -138.,   74.,  136.,  138.,   24.,  -50.,  -40.,
+           -78., -110.,   22.,  408.,   28.,  212.,   88.,   60.,  -56.,  158.,
+           -22.,  -80.,  -64.]]], device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[488., 546., 356., 382., 326., 420., 506., 530., 546., 456.]]],
+       device='cuda:0')
+number of violation:  0
+Attack finished in 98.1800 seconds.
+PGD attack failed
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=0.25, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[ -94., -160.,   30.,   12.,   88.,  -50.,  -76.,  -64., -144.,  -22.,
+           -6.,  -44.,   60.,   96.,   48.,   22.,   -6.,  -62.,  -12.,  -36.,
+          -72.,  -20.,  -70., -148.,   84.,  130.,  140.,   22.,  -80.,  -58.,
+          -68., -112.,   28.,  486.,   42.,  158.,   70.,  110.,  -46.,  176.,
+           40.,  -78.,  -82.]], device='cuda:0')
+100%|████████████████████████████████████████████████████████████████████████████████████| 1/1 [01:40<00:00, 100.14s/it]
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[-112., -154.,   80.,  -26.,   86.,  -36., -114., -102., -150.,  -52.,
+            28.,   -2.,   34.,  142.,    6.,  -52.,  -32., -112.,   26.,   26.,
+           -58.,   -2.,   -8.,  -82.,   66.,  328.,   90.,   64.,    6., -120.,
+           -54.,  -78.,   30.,  340.,  -20.,  172.,  140.,   44.,  -84.,  162.,
+           -50.,  -52.,  -56.],
+         [-112., -154.,   80.,  -26.,   86.,  -36., -114., -102., -150.,  -52.,
+            28.,   -2.,   34.,  142.,    6.,  -52.,  -32., -112.,   26.,   26.,
+           -58.,   -2.,   -8.,  -82.,   66.,  328.,   90.,   64.,    6., -120.,
+           -54.,  -78.,   30.,  340.,  -20.,  172.,  140.,   44.,  -84.,  162.,
+           -50.,  -52.,  -56.]]], device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[452., 494., 260., 366., 254., 376., 454., 442., 490., 392.]]],
+       device='cuda:0')
+number of violation:  0
+Attack finished in 100.1887 seconds.
+PGD attack failed
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=0.25, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[ -94., -160.,   30.,   12.,   88.,  -50.,  -76.,  -64., -144.,  -22.,
+           -6.,  -44.,   60.,   96.,   48.,   22.,   -6.,  -62.,  -12.,  -36.,
+          -72.,  -20.,  -70., -148.,   84.,  130.,  140.,   22.,  -80.,  -58.,
+          -68., -112.,   28.,  486.,   42.,  158.,   70.,  110.,  -46.,  176.,
+           40.,  -78.,  -82.]], device='cuda:0')
+100%|█████████████████████████████████████████████████████████████████████████████████████| 1/1 [01:37<00:00, 97.20s/it]
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[-100., -142.,    4.,   34.,   58.,  -36., -110., -114., -186.,  -36.,
+            48.,   -2.,   54.,  110.,   22.,  -52.,    4., -104.,   58.,   26.,
+           -22.,   -6.,  -36., -110.,   82.,  224.,   98.,   28.,   22.,  -64.,
+           -58.,  -90.,   70.,  416.,    4.,  164.,   72.,   60.,  -68.,  170.,
+           -54.,  -64.,  -76.],
+         [-100., -142.,    4.,   34.,   58.,  -36., -110., -114., -186.,  -36.,
+            48.,   -2.,   54.,  110.,   22.,  -52.,    4., -104.,   58.,   26.,
+           -22.,   -6.,  -36., -110.,   82.,  224.,   98.,   28.,   22.,  -64.,
+           -58.,  -90.,   70.,  416.,    4.,  164.,   72.,   60.,  -68.,  170.,
+           -54.,  -64.,  -76.]]], device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[516., 558., 412., 382., 358., 452., 526., 530., 602., 452.]]],
+       device='cuda:0')
+number of violation:  0
+Attack finished in 97.2360 seconds.
+PGD attack failed
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=0.25, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[ -94., -160.,   30.,   12.,   88.,  -50.,  -76.,  -64., -144.,  -22.,
+           -6.,  -44.,   60.,   96.,   48.,   22.,   -6.,  -62.,  -12.,  -36.,
+          -72.,  -20.,  -70., -148.,   84.,  130.,  140.,   22.,  -80.,  -58.,
+          -68., -112.,   28.,  486.,   42.,  158.,   70.,  110.,  -46.,  176.,
+           40.,  -78.,  -82.]], device='cuda:0')
+  0%|                                                                                             | 0/1 [00:00<?, ?it/s]pgd early stop
+  0%|                                                                                             | 0/1 [01:21<?, ?it/s]
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[-126., -144.,   30.,  -60.,  100.,  -42.,  -76., -116., -196.,  -62.,
+             6.,   -4.,   44.,  116.,   52.,  -38.,  -34.,  -90.,   24.,   32.,
+           -60.,    8.,   -2.,  -72.,   84.,  330.,   84.,   78.,   -4., -102.,
+           -20.,  -92.,   24.,  322.,  -18.,  126.,  110.,   42.,  -50.,  132.,
+           -16.,  -70.,  -38.],
+         [-126., -144.,   30.,  -60.,  100.,  -42.,  -76., -116., -196.,  -62.,
+             6.,   -4.,   44.,  116.,   52.,  -38.,  -34.,  -90.,   24.,   32.,
+           -60.,    8.,   -2.,  -72.,   84.,  330.,   84.,   78.,   -4., -102.,
+           -20.,  -92.,   24.,  322.,  -18.,  126.,  110.,   42.,  -50.,  132.,
+           -16.,  -70.,  -38.]]], device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[448., 466., 292., 382., 222., 364., 398., 438., 518., 384.]]],
+       device='cuda:0')
+number of violation:  1
+Attack finished in 81.2573 seconds.
+PGD attack succeeded!
+Result: unsafe-pgd (timed out) in 1929.9985 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 6, vnnlib ID: 6 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Using onnx onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx
+Using vnnlib vnnlib/model_64_idx_8258_eps_3.00000.vnnlib
+Loading onnx ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx wih quirks {}
+Onnx optimization with flag: fix_gtrsb
+Found existed optimized onnx model at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx.optimized
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+12288 inputs and 43 outputs in vnnlib
+Last Softmax node found, peel it off
+Merging Sign node: %s BoundSign(name=/44, inputs=[/43], perturbed=False)
+Merging Sign node: %s BoundSign(name=/50, inputs=[/49], perturbed=False)
+Merging Sign node: %s BoundSign(name=/56, inputs=[/55], perturbed=False)
+Merging Sign node: %s BoundSign(name=/71, inputs=[/70], perturbed=False)
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=0.75, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[ -94., -160.,   30.,   12.,   88.,  -50.,  -76.,  -64., -144.,  -22.,
+           -6.,  -44.,   60.,   96.,   48.,   22.,   -6.,  -62.,  -12.,  -36.,
+          -72.,  -20.,  -70., -148.,   84.,  130.,  140.,   22.,  -80.,  -58.,
+          -68., -112.,   28.,  486.,   42.,  158.,   70.,  110.,  -46.,  176.,
+           40.,  -78.,  -82.]], device='cuda:0')
+  0%|                                                                                             | 0/1 [00:00<?, ?it/s]pgd early stop
+  0%|                                                                                             | 0/1 [00:12<?, ?it/s]
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[-122., -116.,   34.,  -40.,   52.,  -62.,  -68., -124., -212.,  -50.,
+             6.,   40.,   24.,  132.,    4.,  -74.,  -10.,  -98.,   28.,   28.,
+           -28.,  -12.,  -38.,  -40.,   28.,  358.,   92.,   74.,  -48.,  -94.,
+           -48.,  -76.,   44.,  354.,  -10.,  146.,  106.,   42.,  -42.,  148.,
+           -56.,  -50.,   -2.],
+         [-122., -116.,   34.,  -40.,   52.,  -62.,  -68., -124., -212.,  -50.,
+             6.,   40.,   24.,  132.,    4.,  -74.,  -10.,  -98.,   28.,   28.,
+           -28.,  -12.,  -38.,  -40.,   28.,  358.,   92.,   74.,  -48.,  -94.,
+           -48.,  -76.,   44.,  354.,  -10.,  146.,  106.,   42.,  -42.,  148.,
+           -56.,  -50.,   -2.]]], device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[476., 470., 320., 394., 302., 416., 422., 478., 566., 404.]]],
+       device='cuda:0')
+number of violation:  1
+Attack finished in 12.3880 seconds.
+PGD attack succeeded!
+Result: unsafe-pgd in 14.7846 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 7, vnnlib ID: 7 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Using onnx onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx
+Using vnnlib vnnlib/model_64_idx_8258_eps_5.00000.vnnlib
+Loading onnx ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx wih quirks {}
+Onnx optimization with flag: fix_gtrsb
+Found existed optimized onnx model at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx.optimized
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+12288 inputs and 43 outputs in vnnlib
+Last Softmax node found, peel it off
+Merging Sign node: %s BoundSign(name=/44, inputs=[/43], perturbed=False)
+Merging Sign node: %s BoundSign(name=/50, inputs=[/49], perturbed=False)
+Merging Sign node: %s BoundSign(name=/56, inputs=[/55], perturbed=False)
+Merging Sign node: %s BoundSign(name=/71, inputs=[/70], perturbed=False)
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=1.25, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[ -94., -160.,   30.,   12.,   88.,  -50.,  -76.,  -64., -144.,  -22.,
+           -6.,  -44.,   60.,   96.,   48.,   22.,   -6.,  -62.,  -12.,  -36.,
+          -72.,  -20.,  -70., -148.,   84.,  130.,  140.,   22.,  -80.,  -58.,
+          -68., -112.,   28.,  486.,   42.,  158.,   70.,  110.,  -46.,  176.,
+           40.,  -78.,  -82.]], device='cuda:0')
+  0%|                                                                                             | 0/1 [00:00<?, ?it/s]pgd early stop
+  0%|                                                                                             | 0/1 [00:05<?, ?it/s]
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[ -94., -112.,   38.,   40.,   16., -146., -164., -168., -164.,   62.,
+           -34.,  -20.,   76.,  136.,    8.,   38.,   30.,  -34.,   16.,   76.,
+           -28.,   24.,   14., -144.,   44.,  114.,   36.,   86.,   12.,   -6.,
+          -128., -172.,   80.,  298.,   78.,  310.,  110.,   74., -122.,  144.,
+            -8.,   14.,  -10.],
+         [ -94., -112.,   38.,   40.,   16., -146., -164., -168., -164.,   62.,
+           -34.,  -20.,   76.,  136.,    8.,   38.,   30.,  -34.,   16.,   76.,
+           -28.,   24.,   14., -144.,   44.,  114.,   36.,   86.,   12.,   -6.,
+          -128., -172.,   80.,  298.,   78.,  310.,  110.,   74., -122.,  144.,
+            -8.,   14.,  -10.]]], device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[392., 410., 260., 258., 282., 444., 462., 466., 462., 236.]]],
+       device='cuda:0')
+number of violation:  1
+Attack finished in 5.9613 seconds.
+PGD attack succeeded!
+Result: unsafe-pgd in 7.4864 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 8, vnnlib ID: 8 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Using onnx onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx
+Using vnnlib vnnlib/model_64_idx_8258_eps_10.00000.vnnlib
+Loading onnx ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx wih quirks {}
+Onnx optimization with flag: fix_gtrsb
+Found existed optimized onnx model at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx.optimized
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+12288 inputs and 43 outputs in vnnlib
+Last Softmax node found, peel it off
+Merging Sign node: %s BoundSign(name=/44, inputs=[/43], perturbed=False)
+Merging Sign node: %s BoundSign(name=/50, inputs=[/49], perturbed=False)
+Merging Sign node: %s BoundSign(name=/56, inputs=[/55], perturbed=False)
+Merging Sign node: %s BoundSign(name=/71, inputs=[/70], perturbed=False)
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=2.5, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[ -94., -160.,   30.,   12.,   88.,  -50.,  -76.,  -64., -144.,  -22.,
+           -6.,  -44.,   60.,   96.,   48.,   22.,   -6.,  -62.,  -12.,  -36.,
+          -72.,  -20.,  -70., -148.,   84.,  130.,  140.,   22.,  -80.,  -58.,
+          -68., -112.,   28.,  486.,   42.,  158.,   70.,  110.,  -46.,  176.,
+           40.,  -78.,  -82.]], device='cuda:0')
+  0%|                                                                                             | 0/1 [00:00<?, ?it/s]pgd early stop
+  0%|                                                                                             | 0/1 [00:06<?, ?it/s]
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[-132.,  -94.,   80.,   50.,   -2.,  -96., -166., -174., -166.,   80.,
+           -12.,  -82.,  138.,   90.,    6.,   88.,   12.,  -16.,   14.,   34.,
+           -22.,   18.,   24.,  -86.,   74.,   56.,   30.,   36.,   18.,  -12.,
+           -86., -174.,   70.,  292.,    8.,  312.,   56.,  136., -144.,  162.,
+           -34.,    0.,  -64.],
+         [-132.,  -94.,   80.,   50.,   -2.,  -96., -166., -174., -166.,   80.,
+           -12.,  -82.,  138.,   90.,    6.,   88.,   12.,  -16.,   14.,   34.,
+           -22.,   18.,   24.,  -86.,   74.,   56.,   30.,   36.,   18.,  -12.,
+           -86., -174.,   70.,  292.,    8.,  312.,   56.,  136., -144.,  162.,
+           -34.,    0.,  -64.]]], device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[424., 386., 212., 242., 294., 388., 458., 466., 458., 212.]]],
+       device='cuda:0')
+number of violation:  1
+Attack finished in 6.1016 seconds.
+PGD attack succeeded!
+Result: unsafe-pgd in 7.5729 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 9, vnnlib ID: 9 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Using onnx onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx
+Using vnnlib vnnlib/model_64_idx_8258_eps_15.00000.vnnlib
+Loading onnx ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx wih quirks {}
+Onnx optimization with flag: fix_gtrsb
+Found existed optimized onnx model at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx.optimized
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+12288 inputs and 43 outputs in vnnlib
+Last Softmax node found, peel it off
+Merging Sign node: %s BoundSign(name=/44, inputs=[/43], perturbed=False)
+Merging Sign node: %s BoundSign(name=/50, inputs=[/49], perturbed=False)
+Merging Sign node: %s BoundSign(name=/56, inputs=[/55], perturbed=False)
+Merging Sign node: %s BoundSign(name=/71, inputs=[/70], perturbed=False)
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=3.75, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[ -98., -156.,   10.,   28.,   72.,  -46.,  -80.,  -80., -160.,  -26.,
+           10.,  -20.,   60.,   88.,   52.,   -2.,    6.,  -74.,    4.,   -4.,
+          -68.,  -24.,  -54., -132.,   96.,  150.,  116.,   34.,  -72.,  -70.,
+          -64., -100.,   20.,  486.,   38.,  150.,   74.,  102.,  -34.,  188.,
+           32.,  -98.,  -74.]], device='cuda:0')
+  0%|                                                                                             | 0/1 [00:00<?, ?it/s]pgd early stop
+  0%|                                                                                             | 0/1 [00:04<?, ?it/s]
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[ -98.,  -84.,   94.,   52.,  -60., -166., -152., -160., -164.,   82.,
+           -70.,  -44.,  104.,   96.,   16.,  -26.,   14.,  -14.,   -4.,   88.,
+           -92.,   -8.,  -30.,  -20.,   76.,  142.,   40.,   70.,   -8.,  -30.,
+           -96.,  -92.,   52.,  254.,   66.,  294.,   38.,   98.,  -38.,  152.,
+           -32.,   34.,  -30.],
+         [ -98.,  -84.,   94.,   52.,  -60., -166., -152., -160., -164.,   82.,
+           -70.,  -44.,  104.,   96.,   16.,  -26.,   14.,  -14.,   -4.,   88.,
+           -92.,   -8.,  -30.,  -20.,   76.,  142.,   40.,   70.,   -8.,  -30.,
+           -96.,  -92.,   52.,  254.,   66.,  294.,   38.,   98.,  -38.,  152.,
+           -32.,   34.,  -30.]]], device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[352., 338., 160., 202., 314., 420., 406., 414., 418., 172.]]],
+       device='cuda:0')
+number of violation:  1
+Attack finished in 4.7016 seconds.
+PGD attack succeeded!
+Result: unsafe-pgd in 6.2400 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 10, vnnlib ID: 10 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Using onnx onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx
+Using vnnlib vnnlib/model_64_idx_11985_eps_1.00000.vnnlib
+Loading onnx ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx wih quirks {}
+Onnx optimization with flag: fix_gtrsb
+Found existed optimized onnx model at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx.optimized
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+12288 inputs and 43 outputs in vnnlib
+Last Softmax node found, peel it off
+Merging Sign node: %s BoundSign(name=/44, inputs=[/43], perturbed=False)
+Merging Sign node: %s BoundSign(name=/50, inputs=[/49], perturbed=False)
+Merging Sign node: %s BoundSign(name=/56, inputs=[/55], perturbed=False)
+Merging Sign node: %s BoundSign(name=/71, inputs=[/70], perturbed=False)
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=0.25, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[  70.,  160.,  -78., -100.,  192.,  122.,  -40.,  364.,  148.,  -38.,
+           30.,  -96.,   40.,  -24.,  -28.,   42.,   62.,  -30., -160., -160.,
+           20.,  -16.,  -38.,  -44.,  -44., -158.,  -80.,  -82.,  -44.,  -82.,
+          -32.,  -56.,   -8.,   98.,  -70.,  -46.,  -82.,   74.,  -70.,   60.,
+          136.,  -42.,   74.]], device='cuda:0')
+  0%|                                                                                             | 0/1 [00:00<?, ?it/s]pgd early stop
+  0%|                                                                                             | 0/1 [00:01<?, ?it/s]
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[  76.,   54.,  -44.,  -86.,  190.,    8.,  -78.,  242.,  286.,   20.,
+            20., -138.,   70.,  -22.,  -30.,   64.,  112.,   12., -186., -106.,
+            42.,  -58.,    8.,  -22., -106., -220.,  -14., -148.,  -42., -112.,
+            10.,  -46.,   -6.,   56.,   12.,   32., -100.,   92.,  -36.,   70.,
+           122.,   36.,   -4.],
+         [  76.,   54.,  -44.,  -86.,  190.,    8.,  -78.,  242.,  286.,   20.,
+            20., -138.,   70.,  -22.,  -30.,   64.,  112.,   12., -186., -106.,
+            42.,  -58.,    8.,  -22., -106., -220.,  -14., -148.,  -42., -112.,
+            10.,  -46.,   -6.,   56.,   12.,   32., -100.,   92.,  -36.,   70.,
+           122.,   36.,   -4.]]], device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[166., 188., 286., 328.,  52., 234., 320., -44., 222., 222.]]],
+       device='cuda:0')
+number of violation:  1
+Attack finished in 1.9060 seconds.
+PGD attack succeeded!
+Result: unsafe-pgd in 3.3371 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 11, vnnlib ID: 11 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Using onnx onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx
+Using vnnlib vnnlib/model_64_idx_11985_eps_3.00000.vnnlib
+Loading onnx ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx wih quirks {}
+Onnx optimization with flag: fix_gtrsb
+Found existed optimized onnx model at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx.optimized
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+12288 inputs and 43 outputs in vnnlib
+Last Softmax node found, peel it off
+Merging Sign node: %s BoundSign(name=/44, inputs=[/43], perturbed=False)
+Merging Sign node: %s BoundSign(name=/50, inputs=[/49], perturbed=False)
+Merging Sign node: %s BoundSign(name=/56, inputs=[/55], perturbed=False)
+Merging Sign node: %s BoundSign(name=/71, inputs=[/70], perturbed=False)
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=0.75, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[  70.,  160.,  -78., -100.,  192.,  122.,  -40.,  364.,  148.,  -38.,
+           30.,  -96.,   40.,  -24.,  -28.,   42.,   62.,  -30., -160., -160.,
+           20.,  -16.,  -38.,  -44.,  -44., -158.,  -80.,  -82.,  -44.,  -82.,
+          -32.,  -56.,   -8.,   98.,  -70.,  -46.,  -82.,   74.,  -70.,   60.,
+          136.,  -42.,   74.]], device='cuda:0')
+  0%|                                                                                             | 0/1 [00:00<?, ?it/s]pgd early stop
+  0%|                                                                                             | 0/1 [00:01<?, ?it/s]
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[  70.,   80.,   10.,  -28.,   92.,   66.,  -32.,  168.,  264.,   54.,
+            38., -136.,    0.,  -40.,  -64.,   46.,   66.,   66., -156.,  -60.,
+            36.,   -4.,  -10.,   68.,  -64., -254., -128., -142., -104.,  -38.,
+             4.,  128.,  -88.,   -6.,   18.,  -42., -182.,  118.,    2.,   56.,
+           140.,   -2.,  -14.],
+         [  70.,   80.,   10.,  -28.,   92.,   66.,  -32.,  168.,  264.,   54.,
+            38., -136.,    0.,  -40.,  -64.,   46.,   66.,   66., -156.,  -60.,
+            36.,   -4.,  -10.,   68.,  -64., -254., -128., -142., -104.,  -38.,
+             4.,  128.,  -88.,   -6.,   18.,  -42., -182.,  118.,    2.,   56.,
+           140.,   -2.,  -14.]]], device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[ 98.,  88., 158., 196.,  76., 102., 200., -96., 114., 130.]]],
+       device='cuda:0')
+number of violation:  1
+Attack finished in 1.8720 seconds.
+PGD attack succeeded!
+Result: unsafe-pgd in 3.3161 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 12, vnnlib ID: 12 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Using onnx onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx
+Using vnnlib vnnlib/model_64_idx_11985_eps_5.00000.vnnlib
+Loading onnx ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx wih quirks {}
+Onnx optimization with flag: fix_gtrsb
+Found existed optimized onnx model at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx.optimized
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+12288 inputs and 43 outputs in vnnlib
+Last Softmax node found, peel it off
+Merging Sign node: %s BoundSign(name=/44, inputs=[/43], perturbed=False)
+Merging Sign node: %s BoundSign(name=/50, inputs=[/49], perturbed=False)
+Merging Sign node: %s BoundSign(name=/56, inputs=[/55], perturbed=False)
+Merging Sign node: %s BoundSign(name=/71, inputs=[/70], perturbed=False)
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=1.25, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[  70.,  160.,  -78., -100.,  192.,  122.,  -40.,  364.,  148.,  -38.,
+           30.,  -96.,   40.,  -24.,  -28.,   42.,   62.,  -30., -160., -160.,
+           20.,  -16.,  -38.,  -44.,  -44., -158.,  -80.,  -82.,  -44.,  -82.,
+          -32.,  -56.,   -8.,   98.,  -70.,  -46.,  -82.,   74.,  -70.,   60.,
+          136.,  -42.,   74.]], device='cuda:0')
+  0%|                                                                                             | 0/1 [00:00<?, ?it/s]pgd early stop
+  0%|                                                                                             | 0/1 [00:01<?, ?it/s]
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[  -4.,  230.,   28.,  -30.,  154.,   16.,  -50.,   90., -118.,   52.,
+            84.,  -54.,   86.,  -50.,  -30.,   -8.,   32.,   96.,  -10., -110.,
+            38.,   50.,  -84., -106.,    2.,  -76.,  -38.,    0., -182., -132.,
+          -114.,  -26.,  -10.,   60.,  -16.,   92.,  -60.,  164.,  -60.,   58.,
+           122.,  -52.,   56.],
+         [  -4.,  230.,   28.,  -30.,  154.,   16.,  -50.,   90., -118.,   52.,
+            84.,  -54.,   86.,  -50.,  -30.,   -8.,   32.,   96.,  -10., -110.,
+            38.,   50.,  -84., -106.,    2.,  -76.,  -38.,    0., -182., -132.,
+          -114.,  -26.,  -10.,   60.,  -16.,   92.,  -60.,  164.,  -60.,   58.,
+           122.,  -52.,   56.]]], device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[  94., -140.,   62.,  120.,  -64.,   74.,  140.,  208.,   38.,    6.]]],
+       device='cuda:0')
+number of violation:  6
+Attack finished in 1.8686 seconds.
+PGD attack succeeded!
+Result: unsafe-pgd in 3.3623 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 13, vnnlib ID: 13 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Using onnx onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx
+Using vnnlib vnnlib/model_64_idx_11985_eps_10.00000.vnnlib
+Loading onnx ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx wih quirks {}
+Onnx optimization with flag: fix_gtrsb
+Found existed optimized onnx model at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx.optimized
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+12288 inputs and 43 outputs in vnnlib
+Last Softmax node found, peel it off
+Merging Sign node: %s BoundSign(name=/44, inputs=[/43], perturbed=False)
+Merging Sign node: %s BoundSign(name=/50, inputs=[/49], perturbed=False)
+Merging Sign node: %s BoundSign(name=/56, inputs=[/55], perturbed=False)
+Merging Sign node: %s BoundSign(name=/71, inputs=[/70], perturbed=False)
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=2.5, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[  80.,  166.,  -44.,  -62.,  166.,  140.,  -18.,  374.,  154.,  -48.,
+           20., -106.,   -6.,  -10.,  -18.,   32.,   72.,  -12., -170., -146.,
+           18.,  -30.,  -56.,  -78.,  -74., -180., -102.,  -88.,  -42.,  -84.,
+          -30.,  -30.,   10.,   84.,  -84.,  -40., -112.,   72.,  -92.,   66.,
+          138.,  -64.,   68.]], device='cuda:0')
+  0%|                                                                                             | 0/1 [00:00<?, ?it/s]pgd early stop
+  0%|                                                                                             | 0/1 [00:00<?, ?it/s]
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[  78.,  132.,  -42., -112.,  140.,   26.,  -72.,  248.,  308.,   22.,
+            70., -100.,   84., -112.,  -32.,   74.,  158.,   54., -160.,  -88.,
+            68.,  -44.,  -38.,   -4., -100., -234.,  -36., -142., -132., -118.,
+            -4.,   36.,  -36.,   22.,   -2.,  -34., -202.,  122.,  -38.,   76.,
+           104.,    2.,   22.],
+         [  78.,  132.,  -42., -112.,  140.,   26.,  -72.,  248.,  308.,   22.,
+            70., -100.,   84., -112.,  -32.,   74.,  158.,   54., -160.,  -88.,
+            68.,  -44.,  -38.,   -4., -100., -234.,  -36., -142., -132., -118.,
+            -4.,   36.,  -36.,   22.,   -2.,  -34., -202.,  122.,  -38.,   76.,
+           104.,    2.,   22.]]], device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[170., 116., 290., 360., 108., 222., 320., -60., 226., 178.]]],
+       device='cuda:0')
+number of violation:  1
+Attack finished in 0.9533 seconds.
+PGD attack succeeded!
+Result: unsafe-pgd in 2.3170 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 14, vnnlib ID: 14 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Using onnx onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx
+Using vnnlib vnnlib/model_64_idx_11985_eps_15.00000.vnnlib
+Loading onnx ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx wih quirks {}
+Onnx optimization with flag: fix_gtrsb
+Found existed optimized onnx model at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_64_64_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_MP_2_BN_Dense_1024_BN_Dense_43_ep_30.onnx.optimized
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+12288 inputs and 43 outputs in vnnlib
+Last Softmax node found, peel it off
+Merging Sign node: %s BoundSign(name=/44, inputs=[/43], perturbed=False)
+Merging Sign node: %s BoundSign(name=/50, inputs=[/49], perturbed=False)
+Merging Sign node: %s BoundSign(name=/56, inputs=[/55], perturbed=False)
+Merging Sign node: %s BoundSign(name=/71, inputs=[/70], perturbed=False)
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=3.75, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[  54.,  112.,  -98.,  -76.,  124.,  130.,  -60.,  332.,  164.,   -2.,
+           70.,  -64.,   56.,  -24.,  -24.,   82.,   94.,   26., -192., -168.,
+           24.,  -12.,  -62.,  -72.,  -64., -174.,  -80.,  -98.,  -24.,  -98.,
+            4.,  -80.,   20.,   78.,  -38.,    2.,  -58.,   54.,  -66.,   76.,
+          120.,  -38.,   50.]], device='cuda:0')
+  0%|                                                                                             | 0/1 [00:00<?, ?it/s]pgd early stop
+  0%|                                                                                             | 0/1 [00:00<?, ?it/s]
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[   6.,    4.,  -38.,   28.,   44.,  102.,  -72.,  208.,  228.,  118.,
+           202., -104.,   48.,  -24.,  -72.,   26.,  130.,  -18., -176., -112.,
+            96.,  -64.,   10.,    8., -120., -186.,  -68., -178., -100.,  -66.,
+            -4.,  -12.,  -12.,   46.,    6.,  102.,  -78.,    6.,  -26.,   56.,
+            40.,   -6.,   10.],
+         [   6.,    4.,  -38.,   28.,   44.,  102.,  -72.,  208.,  228.,  118.,
+           202., -104.,   48.,  -24.,  -72.,   26.,  130.,  -18., -176., -112.,
+            96.,  -64.,   10.,    8., -120., -186.,  -68., -178., -100.,  -66.,
+            -4.,  -12.,  -12.,   46.,    6.,  102.,  -78.,    6.,  -26.,   56.,
+            40.,   -6.,   10.]]], device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[202., 204., 246., 180., 164., 106., 280., -20.,  90.,   6.]]],
+       device='cuda:0')
+number of violation:  1
+Attack finished in 0.9498 seconds.
+PGD attack succeeded!
+Result: unsafe-pgd in 2.4467 seconds
+############# Summary #############
+Final verified acc: 0.0% (total 15 examples)
+Problem instances count: 15 , total verified (safe/unsat): 0 , total falsified (unsafe/sat): 15 , timeout: 0
+mean time for ALL instances (total 15):133.6710921355571, max time: 1929.9985101222992
+mean time for verified UNSAFE instances (total 15): 133.67118124961854, max time: 1929.9985101222992
+unsafe-pgd (total 14), index: [0, 1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+unsafe-pgd (timed out) (total 1), index: [5]

@@ -1,0 +1,932 @@
+Configurations:
+
+general:
+  device: cuda
+  seed: 100
+  conv_mode: patches
+  deterministic: false
+  double_fp: false
+  loss_reduction_func: min
+  sparse_alpha: true
+  sparse_interm: true
+  save_adv_example: false
+  eval_adv_example: false
+  show_adv_example: false
+  precompile_jit: false
+  complete_verifier: bab
+  enable_incomplete_verification: true
+  csv_name: instances2.csv
+  results_file: out.txt
+  root_path: ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition
+  deterministic_opt: false
+  graph_optimizer: 'Customized("custom_graph_optimizer", "merge_sign")'
+  no_batchdim_buffers: true
+  save_output: false
+  output_file: out.pkl
+model:
+  name: null
+  path: null
+  onnx_path: null
+  onnx_path_prefix: ''
+  cache_onnx_conversion: false
+  debug_onnx: false
+  onnx_quirks: null
+  input_shape: null
+  onnx_loader: 'Customized("custom_model_loader", "customized_Gtrsb_loader")'
+  onnx_optimization_flags: fix_gtrsb
+  onnx_vnnlib_joint_optimization_flags: [peel_off_last_softmax_layer]
+  check_optmized: true
+  flatten_final_output: false
+  optimize_graph: null
+data:
+  start: 0
+  end: 10000
+  select_instance: null
+  num_outputs: 10
+  mean: 0.0
+  std: 1.0
+  pkl_path: null
+  dataset: null
+  data_filter_path: null
+  data_idx_file: null
+specification:
+  type: lp
+  robustness_type: verified-acc
+  norm: .inf
+  epsilon: null
+  epsilon_min: 0.0
+  vnnlib_path: null
+  vnnlib_path_prefix: ''
+  rhs_offset: null
+solver:
+  batch_size: 128
+  auto_enlarge_batch_size: false
+  min_batch_size_ratio: 0.1
+  use_float64_in_last_iteration: false
+  early_stop_patience: 10
+  start_save_best: 0.5
+  bound_prop_method: alpha-crown
+  init_bound_prop_method: same
+  prune_after_crown: false
+  crown:
+    batch_size: 1000000000
+    max_crown_size: 1000000000
+  alpha-crown:
+    alpha: true
+    lr_alpha: 0.1
+    iteration: 100
+    share_alphas: false
+    lr_decay: 0.98
+    full_conv_alpha: true
+    max_coeff_mul: .inf
+    matmul_share_alphas: false
+    apply_output_constraints_to: []
+    disable_optimization: [MaxPool]
+  beta-crown:
+    lr_alpha: 0.01
+    lr_beta: 0.03
+    lr_decay: 0.98
+    optimizer: adam
+    iteration: 20
+    beta: true
+    beta_warmup: true
+    enable_opt_interm_bounds: false
+    all_node_split_LP: false
+  forward:
+    refine: false
+    dynamic: false
+    max_dim: 10000
+  multi_class:
+    label_batch_size: 32
+    skip_with_refined_bound: true
+  mip:
+    parallel_solvers: 8
+    solver_threads: 4
+    refine_neuron_timeout: 15
+    refine_neuron_time_percentage: 0.8
+    early_stop: true
+    adv_warmup: true
+    mip_solver: gurobi
+    skip_unsafe: true
+bab:
+  initial_max_domains: 1
+  max_domains: .inf
+  decision_thresh: 0
+  timeout: 360
+  timeout_scale: 1
+  override_timeout: null
+  get_upper_bound: false
+  dfs_percent: 0.0
+  pruning_in_iteration: true
+  pruning_in_iteration_ratio: 0.2
+  sort_targets: false
+  batched_domain_list: true
+  optimized_interm: ''
+  interm_transfer: true
+  recompute_interm: false
+  sort_domain_interval: -1
+  vanilla_crown: false
+  cut:
+    enabled: false
+    implication: false
+    bab_cut: false
+    lp_cut: false
+    method: null
+    lr: 0.01
+    lr_decay: 1.0
+    iteration: 100
+    bab_iteration: -1
+    early_stop_patience: -1
+    lr_beta: 0.02
+    number_cuts: 50
+    topk_cuts_in_filter: 1000
+    batch_size_primal: 100
+    max_num: 1000000000
+    patches_cut: false
+    cplex_cuts: false
+    cplex_cuts_wait: 0
+    cplex_cuts_revpickup: true
+    cut_reference_bounds: true
+    fix_intermediate_bounds: false
+  branching:
+    method: kfsb
+    candidates: 5
+    reduceop: max
+    enable_intermediate_bound_opt: false
+    branching_input_and_activation: false
+    branching_input_and_activation_order: [input, relu]
+    branching_input_iterations: 30
+    branching_relu_iterations: 50
+    sb_coeff_thresh: 0.001
+    nonlinear_split:
+      method: shortcut
+      branching_point_method: uniform
+      num_branches: 2
+      branching_point_refinement: false
+      filter: false
+      filter_beta: false
+      filter_batch_size: 10000
+      filter_iterations: 25
+      shortlist_size: 500
+      loose_tanh_threshold: null
+    new_input_split:
+      enable: false
+      batch_size: 2
+      rounds: 1
+      init_alpha_batch_size: 8192
+      full_alpha: false
+    input_split:
+      enable: false
+      enhanced_bound_prop_method: alpha-crown
+      enhanced_branching_method: naive
+      enhanced_bound_patience: 100000000.0
+      attack_patience: 100000000.0
+      adv_check: 0
+      split_partitions: 2
+      sb_margin_weight: 1.0
+      sb_primary_spec: null
+      sb_primary_spec_iter: 1
+      sb_sum: false
+      bf_backup_thresh: -1
+      bf_rhs_offset: 0
+      bf_zero_crossing_score: false
+      ibp_enhancement: false
+      catch_assertion: false
+      compare_with_old_bounds: false
+      update_rhs_with_attack: false
+  attack:
+    enabled: false
+    beam_candidates: 8
+    beam_depth: 7
+    max_dive_fix_ratio: 0.8
+    min_local_free_ratio: 0.2
+    mip_start_iteration: 5
+    mip_timeout: 30.0
+    adv_pool_threshold: null
+    refined_mip_attacker: false
+    refined_batch_size: null
+attack:
+  pgd_order: before
+  pgd_steps: 100
+  pgd_restarts: 50
+  pgd_batch_size: 50
+  pgd_early_stop: true
+  pgd_lr_decay: 0.99
+  pgd_alpha: auto
+  pgd_loss_mode: null
+  enable_mip_attack: false
+  adv_saver: 'Customized("custom_adv_saver", "customized_gtrsb_saver")'
+  early_stop_condition: 'Customized("custom_early_stop_condition", "customized_gtrsb_condition")'
+  adv_example_finalizer: 'Customized("custom_adv_example_finalizer", "customized_gtrsb_adv_example_finalizer")'
+  pgd_loss: 'Customized("custom_pgd_loss", "customized_gtrsb_loss")'
+  cex_path: ./test_cex.txt
+  attack_mode: PGD
+  attack_tolerance: 0.0
+  attack_func: 'Customized("custom_attacker", "use_LiRPANet")'
+  gama_lambda: 10.0
+  gama_decay: 0.9
+  check_clean: false
+  input_split:
+    pgd_steps: 100
+    pgd_restarts: 30
+    pgd_alpha: auto
+  input_split_enhanced:
+    pgd_steps: 200
+    pgd_restarts: 500000
+    pgd_alpha: auto
+  input_split_check_adv:
+    pgd_steps: 5
+    pgd_restarts: 5
+    pgd_alpha: auto
+    max_num_domains: 10
+debug:
+  view_model: false
+  lp_test: null
+  rescale_vnnlib_ptb: null
+  test_optimized_bounds: false
+  test_optimized_bounds_after_n_iterations: 0
+
+Experiments at Mon Jan 22 22:04:29 2024 on h1
+no customized start/end sample, testing all samples in instances2.csv
+Internal results will be saved to out.txt.
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 0, vnnlib ID: 0 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Using onnx onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx
+Using vnnlib vnnlib/model_48_idx_7040_eps_1.00000.vnnlib
+Loading onnx ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx wih quirks {}
+Onnx optimization with flag: fix_gtrsb
+Found existed optimized onnx model at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx.optimized
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Precompiled vnnlib file found at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/vnnlib/model_48_idx_7040_eps_1.00000.vnnlib.compiled
+Last Softmax node found, peel it off
+Merging Sign node: %s BoundSign(name=/38, inputs=[/37], perturbed=False)
+Merging Sign node: %s BoundSign(name=/44, inputs=[/43], perturbed=False)
+Merging Sign node: %s BoundSign(name=/48, inputs=[/47], perturbed=False)
+Merging Sign node: %s BoundSign(name=/63, inputs=[/62], perturbed=False)
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=0.25, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[  8.,  26.,   0., 162., -20.,  86.,   0.,  -8., -20.,  28.,   6.,  12.,
+           8., -22.,   6.,   2.,  22., -26., -36.,   6.,   0., -14.,  10.,  16.,
+         -50.,   0., -26., -10.,  22.,   0., -20.,  34.,  16., -20.,   8., -18.,
+           0., -40.,   2., -40., -56., -18., -34.]], device='cuda:0')
+pgd early stop
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[ 12.,  30.,  12., 110.,  -8., 118.,   0.,   0., -16.,  -4.,  26.,
+           28.,   8., -30.,   6.,  18.,  30., -66., -32.,   6., -16., -10.,
+          -10.,  12., -54., -12.,  -6., -10.,   6.,   0.,  -8.,  34.,  12.,
+          -16.,   8.,  -2.,  -4., -44.,  10., -32., -48., -38., -26.],
+         [ 12.,  30.,  12., 110.,  -8., 118.,   0.,   0., -16.,  -4.,  26.,
+           28.,   8., -30.,   6.,  18.,  30., -66., -32.,   6., -16., -10.,
+          -10.,  12., -54., -12.,  -6., -10.,   6.,   0.,  -8.,  34.,  12.,
+          -16.,   8.,  -2.,  -4., -44.,  10., -32., -48., -38., -26.]]],
+       device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[ 98.,  80.,  98., 118.,  -8., 110., 110., 126., 114.,  84.]]],
+       device='cuda:0')
+number of violation:  1
+Attack finished in 2.4025 seconds.
+PGD attack succeeded!
+Result: unsafe-pgd in 7.1012 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 1, vnnlib ID: 1 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Using onnx onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx
+Using vnnlib vnnlib/model_48_idx_7040_eps_3.00000.vnnlib
+Loading onnx ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx wih quirks {}
+Onnx optimization with flag: fix_gtrsb
+Found existed optimized onnx model at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx.optimized
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Precompiled vnnlib file found at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/vnnlib/model_48_idx_7040_eps_3.00000.vnnlib.compiled
+Last Softmax node found, peel it off
+Merging Sign node: %s BoundSign(name=/38, inputs=[/37], perturbed=False)
+Merging Sign node: %s BoundSign(name=/44, inputs=[/43], perturbed=False)
+Merging Sign node: %s BoundSign(name=/48, inputs=[/47], perturbed=False)
+Merging Sign node: %s BoundSign(name=/63, inputs=[/62], perturbed=False)
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=0.75, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[  0.,  26.,   0., 166., -20.,  82.,   0., -16., -20.,  20.,   2.,  12.,
+          12., -22.,   2.,  -2.,  18., -30., -32.,  10.,   4., -10.,  14.,  16.,
+         -46.,   0., -26., -10.,  18.,   8., -20.,  42.,  20., -28.,   0., -10.,
+           0., -40.,  -6., -40., -60., -18., -34.]], device='cuda:0')
+pgd early stop
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[ -8.,  26.,  12., 122.,  -8., 126.,  12.,   4., -24.,   8.,  34.,
+            8.,  -4., -22., -14.,   6.,  26., -42., -40.,  22.,   0.,   2.,
+           14.,  20., -46.,   0., -22.,   6.,  -2.,  32., -20.,  18.,   8.,
+          -32.,  16.,   6., -16., -40.,  -6., -36., -40., -26.,  -6.],
+         [ -8.,  26.,  12., 122.,  -8., 126.,  12.,   4., -24.,   8.,  34.,
+            8.,  -4., -22., -14.,   6.,  26., -42., -40.,  22.,   0.,   2.,
+           14.,  20., -46.,   0., -22.,   6.,  -2.,  32., -20.,  18.,   8.,
+          -32.,  16.,   6., -16., -40.,  -6., -36., -40., -26.,  -6.]]],
+       device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[130.,  96., 110., 130.,  -4., 110., 118., 146., 114.,  88.]]],
+       device='cuda:0')
+number of violation:  1
+Attack finished in 0.4249 seconds.
+PGD attack succeeded!
+Result: unsafe-pgd in 0.7056 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 2, vnnlib ID: 2 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Using onnx onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx
+Using vnnlib vnnlib/model_48_idx_7040_eps_5.00000.vnnlib
+Loading onnx ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx wih quirks {}
+Onnx optimization with flag: fix_gtrsb
+Found existed optimized onnx model at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx.optimized
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Precompiled vnnlib file found at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/vnnlib/model_48_idx_7040_eps_5.00000.vnnlib.compiled
+Last Softmax node found, peel it off
+Merging Sign node: %s BoundSign(name=/38, inputs=[/37], perturbed=False)
+Merging Sign node: %s BoundSign(name=/44, inputs=[/43], perturbed=False)
+Merging Sign node: %s BoundSign(name=/48, inputs=[/47], perturbed=False)
+Merging Sign node: %s BoundSign(name=/63, inputs=[/62], perturbed=False)
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=1.25, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[  6.,  24.,  -2., 164., -22.,  88.,  -2., -14., -18.,  26.,   8.,  14.,
+          10., -20.,   4.,   4.,  16., -32., -34.,   8.,   2., -12.,   8.,  14.,
+         -44.,  -2., -24.,  -8.,  24.,   2., -18.,  36.,  14., -22.,   2., -12.,
+           6., -42.,  -4., -46., -62., -20., -32.]], device='cuda:0')
+pgd early stop
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[  0.,  10.,  -4., 122., -32., 126.,  12.,  16.,  -4.,  24.,  18.,
+           12.,   8., -22.,  -6.,   6.,  42., -34., -28.,  26., -20.,  10.,
+           -2.,  16., -46., -12., -26., -10., -14.,  20.,  -8.,  42.,  12.,
+          -20.,  20.,   2., -28., -28., -10., -36., -48., -26., -18.],
+         [  0.,  10.,  -4., 122., -32., 126.,  12.,  16.,  -4.,  24.,  18.,
+           12.,   8., -22.,  -6.,   6.,  42., -34., -28.,  26., -20.,  10.,
+           -2.,  16., -46., -12., -26., -10., -14.,  20.,  -8.,  42.,  12.,
+          -20.,  20.,   2., -28., -28., -10., -36., -48., -26., -18.]]],
+       device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[122., 112., 126., 154.,  -4., 110., 106., 126.,  98., 104.]]],
+       device='cuda:0')
+number of violation:  1
+Attack finished in 0.4048 seconds.
+PGD attack succeeded!
+Result: unsafe-pgd in 0.6647 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 3, vnnlib ID: 3 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Using onnx onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx
+Using vnnlib vnnlib/model_48_idx_7040_eps_10.00000.vnnlib
+Loading onnx ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx wih quirks {}
+Onnx optimization with flag: fix_gtrsb
+Found existed optimized onnx model at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx.optimized
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Precompiled vnnlib file found at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/vnnlib/model_48_idx_7040_eps_10.00000.vnnlib.compiled
+Last Softmax node found, peel it off
+Merging Sign node: %s BoundSign(name=/38, inputs=[/37], perturbed=False)
+Merging Sign node: %s BoundSign(name=/44, inputs=[/43], perturbed=False)
+Merging Sign node: %s BoundSign(name=/48, inputs=[/47], perturbed=False)
+Merging Sign node: %s BoundSign(name=/63, inputs=[/62], perturbed=False)
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=2.5, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[  6.,  24.,  -2., 168., -18.,  84.,  -6., -14., -18.,  26.,   8.,  18.,
+          10., -24.,   4.,   4.,  20., -32., -34.,  12.,   6., -16.,   8.,  18.,
+         -40.,   2., -20.,  -8.,  24.,   6., -14.,  40.,  10., -22.,  -2., -12.,
+           2., -42.,  -8., -50., -66., -16., -32.]], device='cuda:0')
+pgd early stop
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[  2.,  80.,  -6.,  32.,  26.,  68.,  26., -38.,   2.,  18.,  -8.,
+          -18., -18., -28.,   0., -24.,   4.,  32., -18.,   8.,  -2.,   0.,
+          -20.,  34.,  -8.,  26., -40., -16.,  20.,   6., -22.,  20., -46.,
+          -42.,  22.,  -4.,   2., -26., -24., -94.,   2., -16.,  32.],
+         [  2.,  80.,  -6.,  32.,  26.,  68.,  26., -38.,   2.,  18.,  -8.,
+          -18., -18., -28.,   0., -24.,   4.,  32., -18.,   8.,  -2.,   0.,
+          -20.,  34.,  -8.,  26., -40., -16.,  20.,   6., -22.,  20., -46.,
+          -42.,  22.,  -4.,   2., -26., -24., -94.,   2., -16.,  32.]]],
+       device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[ 30., -48.,  38.,   6., -36.,   6.,  70.,  30.,  14.,  40.]]],
+       device='cuda:0')
+number of violation:  3
+Attack finished in 0.2777 seconds.
+PGD attack succeeded!
+Result: unsafe-pgd in 0.5373 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 4, vnnlib ID: 4 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Using onnx onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx
+Using vnnlib vnnlib/model_48_idx_7040_eps_15.00000.vnnlib
+Loading onnx ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx wih quirks {}
+Onnx optimization with flag: fix_gtrsb
+Found existed optimized onnx model at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx.optimized
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Precompiled vnnlib file found at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/vnnlib/model_48_idx_7040_eps_15.00000.vnnlib.compiled
+Last Softmax node found, peel it off
+Merging Sign node: %s BoundSign(name=/38, inputs=[/37], perturbed=False)
+Merging Sign node: %s BoundSign(name=/44, inputs=[/43], perturbed=False)
+Merging Sign node: %s BoundSign(name=/48, inputs=[/47], perturbed=False)
+Merging Sign node: %s BoundSign(name=/63, inputs=[/62], perturbed=False)
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=3.75, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[  4.,  22.,   0., 166., -20.,  82.,   0., -12., -20.,  28.,   6.,  12.,
+           8., -22.,   6.,   6.,  18., -26., -40.,  14.,   4., -14.,  14.,  20.,
+         -42.,   0., -22., -10.,  22.,   8., -20.,  42.,  12., -28.,   4., -18.,
+           4., -44.,  -2., -48., -60., -18., -30.]], device='cuda:0')
+pgd early stop
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[ -8.,  10.,   0., -30.,  -4.,  22., -44.,  -8.,  60.,  24., -62.,
+          -24.,  24.,  10.,   2.,  -2.,  38.,  26., -20., -22.,  16., -42.,
+           10.,  12.,   6.,   8., -22., -18.,  58.,  -8.,   8., -54.,   0.,
+          -36.,  72.,  38., -16.,  16.,  -6., -16.,  12.,  38., -10.],
+         [ -8.,  10.,   0., -30.,  -4.,  22., -44.,  -8.,  60.,  24., -62.,
+          -24.,  24.,  10.,   2.,  -2.,  38.,  26., -20., -22.,  16., -42.,
+           10.,  12.,   6.,   8., -22., -18.,  58.,  -8.,   8., -54.,   0.,
+          -36.,  72.,  38., -16.,  16.,  -6., -16.,  12.,  38., -10.]]],
+       device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[-22., -40., -30., -26., -52.,  14., -22., -90., -54.,  32.]]],
+       device='cuda:0')
+number of violation:  37
+Attack finished in 0.2887 seconds.
+PGD attack succeeded!
+Result: unsafe-pgd in 0.5878 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 5, vnnlib ID: 5 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Using onnx onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx
+Using vnnlib vnnlib/model_48_idx_8258_eps_1.00000.vnnlib
+Loading onnx ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx wih quirks {}
+Onnx optimization with flag: fix_gtrsb
+Found existed optimized onnx model at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx.optimized
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Precompiled vnnlib file found at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/vnnlib/model_48_idx_8258_eps_1.00000.vnnlib.compiled
+Last Softmax node found, peel it off
+Merging Sign node: %s BoundSign(name=/38, inputs=[/37], perturbed=False)
+Merging Sign node: %s BoundSign(name=/44, inputs=[/43], perturbed=False)
+Merging Sign node: %s BoundSign(name=/48, inputs=[/47], perturbed=False)
+Merging Sign node: %s BoundSign(name=/63, inputs=[/62], perturbed=False)
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=0.25, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[ -8., -38.,  28., -42.,  12., -26., -16., -24., -12.,   0.,  -6.,  -4.,
+           4.,  34., -34.,  14.,  -2., -14., -28.,  10.,  -4.,  -2., -18., -60.,
+         -22.,   4.,  22.,  -6., -30., -24., -40., -22.,  32., 120.,  12.,  74.,
+          28.,  48., -18.,  72.,  28.,  14., -18.]], device='cuda:0')
+pgd early stop
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[-14., -36.,  34., -56.,  -6., -28., -18., -18.,  -2., -10.,  -8.,
+           -2.,  30.,  44., -32.,  16.,  -8., -12., -34.,   4., -14.,  -8.,
+          -28., -62., -32.,   2.,  16., -12., -32., -30., -34., -36.,  34.,
+           94.,  26.,  96.,  26.,  42.,  -4.,  54.,  26.,   8., -12.],
+         [-14., -36.,  34., -56.,  -6., -28., -18., -18.,  -2., -10.,  -8.,
+           -2.,  30.,  44., -32.,  16.,  -8., -12., -34.,   4., -14.,  -8.,
+          -28., -62., -32.,   2.,  16., -12., -32., -30., -34., -36.,  34.,
+           94.,  26.,  96.,  26.,  42.,  -4.,  54.,  26.,   8., -12.]]],
+       device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[108., 130.,  60., 150., 100., 122., 112., 112.,  96., 104.]]],
+       device='cuda:0')
+number of violation:  1
+Attack finished in 0.9202 seconds.
+PGD attack succeeded!
+Result: unsafe-pgd in 1.1792 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 6, vnnlib ID: 6 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Using onnx onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx
+Using vnnlib vnnlib/model_48_idx_8258_eps_3.00000.vnnlib
+Loading onnx ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx wih quirks {}
+Onnx optimization with flag: fix_gtrsb
+Found existed optimized onnx model at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx.optimized
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Precompiled vnnlib file found at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/vnnlib/model_48_idx_8258_eps_3.00000.vnnlib.compiled
+Last Softmax node found, peel it off
+Merging Sign node: %s BoundSign(name=/38, inputs=[/37], perturbed=False)
+Merging Sign node: %s BoundSign(name=/44, inputs=[/43], perturbed=False)
+Merging Sign node: %s BoundSign(name=/48, inputs=[/47], perturbed=False)
+Merging Sign node: %s BoundSign(name=/63, inputs=[/62], perturbed=False)
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=0.75, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[ -8., -38.,  28., -42.,  12., -26., -16., -24., -12.,   0.,  -6.,  -4.,
+           4.,  34., -34.,  14.,  -2., -14., -28.,  10.,  -4.,  -2., -18., -60.,
+         -22.,   4.,  22.,  -6., -30., -24., -40., -22.,  32., 120.,  12.,  74.,
+          28.,  48., -18.,  72.,  28.,  14., -18.]], device='cuda:0')
+pgd early stop
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[ -6., -28.,  22., -48.,  10., -48., -30., -42., -22.,  -2., -24.,
+           -2.,  18.,  20., -24.,  28., -16., -12., -10.,  -8., -18.,   8.,
+          -36., -58.,  -4., -14.,  20., -16., -20., -30., -30., -32.,  26.,
+           98.,  26., 104.,  34.,  54.,  -8.,  42.,  34.,   4., -20.],
+         [ -6., -28.,  22., -48.,  10., -48., -30., -42., -22.,  -2., -24.,
+           -2.,  18.,  20., -24.,  28., -16., -12., -10.,  -8., -18.,   8.,
+          -36., -58.,  -4., -14.,  20., -16., -20., -30., -30., -32.,  26.,
+           98.,  26., 104.,  34.,  54.,  -8.,  42.,  34.,   4., -20.]]],
+       device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[104., 126.,  76., 146.,  88., 146., 128., 140., 120., 100.]]],
+       device='cuda:0')
+number of violation:  1
+Attack finished in 0.5404 seconds.
+PGD attack succeeded!
+Result: unsafe-pgd in 0.8237 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 7, vnnlib ID: 7 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Using onnx onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx
+Using vnnlib vnnlib/model_48_idx_8258_eps_5.00000.vnnlib
+Loading onnx ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx wih quirks {}
+Onnx optimization with flag: fix_gtrsb
+Found existed optimized onnx model at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx.optimized
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Precompiled vnnlib file found at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/vnnlib/model_48_idx_8258_eps_5.00000.vnnlib.compiled
+Last Softmax node found, peel it off
+Merging Sign node: %s BoundSign(name=/38, inputs=[/37], perturbed=False)
+Merging Sign node: %s BoundSign(name=/44, inputs=[/43], perturbed=False)
+Merging Sign node: %s BoundSign(name=/48, inputs=[/47], perturbed=False)
+Merging Sign node: %s BoundSign(name=/63, inputs=[/62], perturbed=False)
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=1.25, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[ -8., -38.,  28., -42.,  12., -26., -16., -24., -12.,   0.,  -6.,  -4.,
+           4.,  34., -34.,  14.,  -2., -14., -28.,  10.,  -4.,  -2., -18., -60.,
+         -22.,   4.,  22.,  -6., -30., -24., -40., -22.,  32., 120.,  12.,  74.,
+          28.,  48., -18.,  72.,  28.,  14., -18.]], device='cuda:0')
+pgd early stop
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[-16., -50.,   8., -38.,  12., -62., -28., -32.,  -4.,   0., -22.,
+            0.,  12.,  42., -18.,   6., -30., -18.,  -4.,  -6.,   4.,  10.,
+          -26., -56.,   2.,  -8.,  30.,  -6., -10., -40., -44., -18.,  24.,
+          108.,  20., 110.,  36.,  52., -14.,  64.,  12.,  -2., -10.],
+         [-16., -50.,   8., -38.,  12., -62., -28., -32.,  -4.,   0., -22.,
+            0.,  12.,  42., -18.,   6., -30., -18.,  -4.,  -6.,   4.,  10.,
+          -26., -56.,   2.,  -8.,  30.,  -6., -10., -40., -44., -18.,  24.,
+          108.,  20., 110.,  36.,  52., -14.,  64.,  12.,  -2., -10.]]],
+       device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[124., 158., 100., 146.,  96., 170., 136., 140., 112., 108.]]],
+       device='cuda:0')
+number of violation:  1
+Attack finished in 0.4240 seconds.
+PGD attack succeeded!
+Result: unsafe-pgd in 0.7336 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 8, vnnlib ID: 8 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Using onnx onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx
+Using vnnlib vnnlib/model_48_idx_8258_eps_10.00000.vnnlib
+Loading onnx ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx wih quirks {}
+Onnx optimization with flag: fix_gtrsb
+Found existed optimized onnx model at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx.optimized
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Precompiled vnnlib file found at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/vnnlib/model_48_idx_8258_eps_10.00000.vnnlib.compiled
+Last Softmax node found, peel it off
+Merging Sign node: %s BoundSign(name=/38, inputs=[/37], perturbed=False)
+Merging Sign node: %s BoundSign(name=/44, inputs=[/43], perturbed=False)
+Merging Sign node: %s BoundSign(name=/48, inputs=[/47], perturbed=False)
+Merging Sign node: %s BoundSign(name=/63, inputs=[/62], perturbed=False)
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=2.5, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[ -4., -38.,  28., -46.,  20., -22., -16., -24.,  -8.,  -8.,  -6.,   8.,
+           4.,  34., -34.,  14.,   2., -22., -16.,  14., -12.,  -2., -22., -56.,
+         -22.,   0.,  34.,  -6., -34., -28., -32., -10.,  24., 120.,  12.,  66.,
+          12.,  52., -26.,  72.,  20.,   2., -18.]], device='cuda:0')
+pgd early stop
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[ -6., -24.,  10., -24., -18., -40., -34., -14.,   6., -10., -20.,
+           14.,  26.,  48., -52.,  24., -16., -36., -26.,  -8., -10.,  12.,
+          -36., -50., -16., -14.,  12.,  -4.,  -4., -22., -30., -16.,  30.,
+           90.,  30., 100.,  14.,  46.,  -4.,  62.,  38.,  -4., -20.],
+         [ -6., -24.,  10., -24., -18., -40., -34., -14.,   6., -10., -20.,
+           14.,  26.,  48., -52.,  24., -16., -36., -26.,  -8., -10.,  12.,
+          -36., -50., -16., -14.,  12.,  -4.,  -4., -22., -30., -16.,  30.,
+           90.,  30., 100.,  14.,  46.,  -4.,  62.,  38.,  -4., -20.]]],
+       device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[ 96., 114.,  80., 114., 108., 130., 124., 104.,  84., 100.]]],
+       device='cuda:0')
+number of violation:  1
+Attack finished in 0.4135 seconds.
+PGD attack succeeded!
+Result: unsafe-pgd in 0.7669 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 9, vnnlib ID: 9 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Using onnx onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx
+Using vnnlib vnnlib/model_48_idx_8258_eps_15.00000.vnnlib
+Loading onnx ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx wih quirks {}
+Onnx optimization with flag: fix_gtrsb
+Found existed optimized onnx model at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx.optimized
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Precompiled vnnlib file found at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/vnnlib/model_48_idx_8258_eps_15.00000.vnnlib.compiled
+Last Softmax node found, peel it off
+Merging Sign node: %s BoundSign(name=/38, inputs=[/37], perturbed=False)
+Merging Sign node: %s BoundSign(name=/44, inputs=[/43], perturbed=False)
+Merging Sign node: %s BoundSign(name=/48, inputs=[/47], perturbed=False)
+Merging Sign node: %s BoundSign(name=/63, inputs=[/62], perturbed=False)
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=3.75, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[ -6., -36.,  34., -52.,  22., -24., -10., -26.,  -6., -10.,  -8.,   6.,
+          10.,  32., -32.,  20.,  -4., -20., -10.,  12., -10.,  -4., -28., -58.,
+         -24.,  -2.,  36.,  -4., -32., -30., -34., -16.,  26., 114.,   6.,  64.,
+          18.,  54., -20.,  70.,  18.,   4., -16.]], device='cuda:0')
+pgd early stop
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[-22., -56.,  18., -16., -22., -16., -26., -22., -14.,  10.,  -8.,
+           26.,  22.,  24., -56.,   0.,  16., -16., -38.,  40., -14.,  24.,
+          -16.,  -6., -16.,  18.,   0.,  -4., -16., -10., -10.,  -8.,   6.,
+           82.,  18.,  88.,   6.,  34., -24.,  54.,  30.,  12., -20.],
+         [-22., -56.,  18., -16., -22., -16., -26., -22., -14.,  10.,  -8.,
+           26.,  22.,  24., -56.,   0.,  16., -16., -38.,  40., -14.,  24.,
+          -16.,  -6., -16.,  18.,   0.,  -4., -16., -10., -10.,  -8.,   6.,
+           82.,  18.,  88.,   6.,  34., -24.,  54.,  30.,  12., -20.]]],
+       device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[104., 138.,  64.,  98., 104.,  98., 108., 104.,  96.,  72.]]],
+       device='cuda:0')
+number of violation:  1
+Attack finished in 0.2799 seconds.
+PGD attack succeeded!
+Result: unsafe-pgd in 0.5533 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 10, vnnlib ID: 10 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Using onnx onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx
+Using vnnlib vnnlib/model_48_idx_11985_eps_1.00000.vnnlib
+Loading onnx ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx wih quirks {}
+Onnx optimization with flag: fix_gtrsb
+Found existed optimized onnx model at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx.optimized
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Precompiled vnnlib file found at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/vnnlib/model_48_idx_11985_eps_1.00000.vnnlib.compiled
+Last Softmax node found, peel it off
+Merging Sign node: %s BoundSign(name=/38, inputs=[/37], perturbed=False)
+Merging Sign node: %s BoundSign(name=/44, inputs=[/43], perturbed=False)
+Merging Sign node: %s BoundSign(name=/48, inputs=[/47], perturbed=False)
+Merging Sign node: %s BoundSign(name=/63, inputs=[/62], perturbed=False)
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=0.25, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[ 18.,  12., -66.,  16.,  38.,  16.,  -2.,  62.,  42.,  22.,  -4.,  10.,
+          -2., -44.,  -8.,  -4.,  20., -16.,  34., -32.,  22.,  16., -28., -22.,
+          32., -50.,  48.,   4.,  20.,  10.,  14.,  -4.,  30.,   2.,  10.,  -8.,
+         -14.,   6., -32., -34.,  14., -28.,  36.]], device='cuda:0')
+pgd early stop
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[ 42.,  44., -66.,   8.,  70.,  24.,   2.,  50.,  30.,  -6.,  -4.,
+          -10., -14., -56., -16.,   0.,  12., -16.,  42., -20.,   2.,  20.,
+          -36., -30.,  32., -46.,  44.,   0.,   0.,  22., -14.,   4.,  30.,
+           -6.,   2.,  -8., -10.,   6., -24., -34.,  18., -40.,  32.],
+         [ 42.,  44., -66.,   8.,  70.,  24.,   2.,  50.,  30.,  -6.,  -4.,
+          -10., -14., -56., -16.,   0.,  12., -16.,  42., -20.,   2.,  20.,
+          -36., -30.,  32., -46.,  44.,   0.,   0.,  22., -14.,   4.,  30.,
+           -6.,   2.,  -8., -10.,   6., -24., -34.,  18., -40.,  32.]]],
+       device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[  8.,   6., 116.,  42., -20.,  26.,  48.,  20.,  56.,  54.]]],
+       device='cuda:0')
+number of violation:  1
+Attack finished in 0.1597 seconds.
+PGD attack succeeded!
+Result: unsafe-pgd in 0.4119 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 11, vnnlib ID: 11 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Using onnx onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx
+Using vnnlib vnnlib/model_48_idx_11985_eps_3.00000.vnnlib
+Loading onnx ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx wih quirks {}
+Onnx optimization with flag: fix_gtrsb
+Found existed optimized onnx model at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx.optimized
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Precompiled vnnlib file found at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/vnnlib/model_48_idx_11985_eps_3.00000.vnnlib.compiled
+Last Softmax node found, peel it off
+Merging Sign node: %s BoundSign(name=/38, inputs=[/37], perturbed=False)
+Merging Sign node: %s BoundSign(name=/44, inputs=[/43], perturbed=False)
+Merging Sign node: %s BoundSign(name=/48, inputs=[/47], perturbed=False)
+Merging Sign node: %s BoundSign(name=/63, inputs=[/62], perturbed=False)
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=0.75, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[ 18.,  12., -66.,  16.,  38.,  16.,  -2.,  62.,  42.,  22.,  -4.,  10.,
+          -2., -44.,  -8.,  -4.,  20., -16.,  34., -32.,  22.,  16., -28., -22.,
+          32., -50.,  48.,   4.,  20.,  10.,  14.,  -4.,  30.,   2.,  10.,  -8.,
+         -14.,   6., -32., -34.,  14., -28.,  36.]], device='cuda:0')
+pgd early stop
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[ 40.,   6., -68., -14.,  48.,  26.,  16.,  44.,  52.,   4.,  -6.,
+          -20., -16., -38., -18.,  -2.,  22., -22.,  16.,  -2.,  20.,  18.,
+          -26., -16.,  30., -40.,  30.,   6.,   2.,  16.,   8., -10.,  40.,
+            4.,  16.,  -6.,  -4.,   4., -26., -36.,  32., -42.,  38.],
+         [ 40.,   6., -68., -14.,  48.,  26.,  16.,  44.,  52.,   4.,  -6.,
+          -20., -16., -38., -18.,  -2.,  22., -22.,  16.,  -2.,  20.,  18.,
+          -26., -16.,  30., -40.,  30.,   6.,   2.,  16.,   8., -10.,  40.,
+            4.,  16.,  -6.,  -4.,   4., -26., -36.,  32., -42.,  38.]]],
+       device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[  4.,  38., 112.,  58.,  -4.,  18.,  28.,  -8.,  40.,  50.]]],
+       device='cuda:0')
+number of violation:  2
+Attack finished in 0.1622 seconds.
+PGD attack succeeded!
+Result: unsafe-pgd in 0.4136 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 12, vnnlib ID: 12 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Using onnx onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx
+Using vnnlib vnnlib/model_48_idx_11985_eps_5.00000.vnnlib
+Loading onnx ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx wih quirks {}
+Onnx optimization with flag: fix_gtrsb
+Found existed optimized onnx model at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx.optimized
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Precompiled vnnlib file found at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/vnnlib/model_48_idx_11985_eps_5.00000.vnnlib.compiled
+Last Softmax node found, peel it off
+Merging Sign node: %s BoundSign(name=/38, inputs=[/37], perturbed=False)
+Merging Sign node: %s BoundSign(name=/44, inputs=[/43], perturbed=False)
+Merging Sign node: %s BoundSign(name=/48, inputs=[/47], perturbed=False)
+Merging Sign node: %s BoundSign(name=/63, inputs=[/62], perturbed=False)
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=1.25, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[ 18.,  12., -66.,  16.,  38.,  16.,  -2.,  62.,  42.,  22.,  -4.,  10.,
+          -2., -44.,  -8.,  -4.,  20., -16.,  34., -32.,  22.,  16., -28., -22.,
+          32., -50.,  48.,   4.,  20.,  10.,  14.,  -4.,  30.,   2.,  10.,  -8.,
+         -14.,   6., -32., -34.,  14., -28.,  36.]], device='cuda:0')
+pgd early stop
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[ 44.,  66., -28.,   6.,  64.,  30.,   0.,  40.,  56., -12., -14.,
+           -4., -48., -34.,  -2., -18.,  -6., -14.,  28., -22.,  16.,  26.,
+          -26., -12.,  18., -40.,  10.,  -2.,  -6.,  28., -16.,   6.,   0.,
+            4., -16., -46., -24.,  12., -30., -32.,   8., -58.,  22.],
+         [ 44.,  66., -28.,   6.,  64.,  30.,   0.,  40.,  56., -12., -14.,
+           -4., -48., -34.,  -2., -18.,  -6., -14.,  28., -22.,  16.,  26.,
+          -26., -12.,  18., -40.,  10.,  -2.,  -6.,  28., -16.,   6.,   0.,
+            4., -16., -46., -24.,  12., -30., -32.,   8., -58.,  22.]]],
+       device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[ -4., -26.,  68.,  34., -24.,  10.,  40., -16.,  52.,  54.]]],
+       device='cuda:0')
+number of violation:  4
+Attack finished in 0.1629 seconds.
+PGD attack succeeded!
+Result: unsafe-pgd in 0.4378 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 13, vnnlib ID: 13 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Using onnx onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx
+Using vnnlib vnnlib/model_48_idx_11985_eps_10.00000.vnnlib
+Loading onnx ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx wih quirks {}
+Onnx optimization with flag: fix_gtrsb
+Found existed optimized onnx model at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx.optimized
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Precompiled vnnlib file found at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/vnnlib/model_48_idx_11985_eps_10.00000.vnnlib.compiled
+Last Softmax node found, peel it off
+Merging Sign node: %s BoundSign(name=/38, inputs=[/37], perturbed=False)
+Merging Sign node: %s BoundSign(name=/44, inputs=[/43], perturbed=False)
+Merging Sign node: %s BoundSign(name=/48, inputs=[/47], perturbed=False)
+Merging Sign node: %s BoundSign(name=/63, inputs=[/62], perturbed=False)
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=2.5, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[ 30.,  36., -54.,  12.,  46.,  24.,  -2.,  70.,  46.,  18.,  -4.,   6.,
+          -2., -48.,  -4.,  -8.,  32., -24.,  38., -36.,  18.,  24., -32., -26.,
+          16., -54.,  40.,   0.,  12.,   2.,  10.,   0.,  22.,  -6.,  -2., -28.,
+         -18.,   6., -28., -30.,  14., -36.,  20.]], device='cuda:0')
+pgd early stop
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[ 16.,  54., -48., -10.,  72.,  26., -20.,  68.,  16., -20.,  26.,
+            0., -36., -46., -14., -26.,   6.,  -2.,  60., -38.,   8.,  30.,
+          -42., -16.,  14., -36.,  26.,  14., -22.,   4., -32.,   6., -12.,
+           -8., -32., -18., -20.,   4., -26., -28.,  48., -38.,  38.],
+         [ 16.,  54., -48., -10.,  72.,  26., -20.,  68.,  16., -20.,  26.,
+            0., -36., -46., -14., -26.,   6.,  -2.,  60., -38.,   8.,  30.,
+          -42., -16.,  14., -36.,  26.,  14., -22.,   4., -32.,   6., -12.,
+           -8., -32., -18., -20.,   4., -26., -28.,  48., -38.,  38.]]],
+       device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[ 52.,  14., 116.,  78.,  -4.,  42.,  88.,  52.,  88.,  42.]]],
+       device='cuda:0')
+number of violation:  1
+Attack finished in 0.1621 seconds.
+PGD attack succeeded!
+Result: unsafe-pgd in 0.4793 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 14, vnnlib ID: 14 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Using onnx onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx
+Using vnnlib vnnlib/model_48_idx_11985_eps_15.00000.vnnlib
+Loading onnx ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx wih quirks {}
+Onnx optimization with flag: fix_gtrsb
+Found existed optimized onnx model at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/onnx/3_48_48_QConv_32_5_MP_2_BN_QConv_64_5_MP_2_BN_QConv_64_3_BN_Dense_256_BN_Dense_43_ep_30.onnx.optimized
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Automatic inference of operator: sign
+Precompiled vnnlib file found at ../../vnncomp2023_benchmarks/benchmarks/traffic_signs_recognition/vnnlib/model_48_idx_11985_eps_15.00000.vnnlib.compiled
+Last Softmax node found, peel it off
+Merging Sign node: %s BoundSign(name=/38, inputs=[/37], perturbed=False)
+Merging Sign node: %s BoundSign(name=/44, inputs=[/43], perturbed=False)
+Merging Sign node: %s BoundSign(name=/48, inputs=[/47], perturbed=False)
+Merging Sign node: %s BoundSign(name=/63, inputs=[/62], perturbed=False)
+Attack parameters: initialization=uniform, steps=100, restarts=50, alpha=3.75, initialization=uniform, GAMA=False
+Model output of first 5 examples:
+ tensor([[ 28.,  22., -60.,  -2.,  32.,  26.,  -8.,  56.,  52.,  24.,   2.,  -8.,
+          -4., -46., -22.,  -6.,  34., -14.,  40., -14.,  16.,  18., -26., -12.,
+          22., -68.,  34.,  14.,   6.,  12.,  20.,  -2.,  12.,  -4.,  12.,  -6.,
+         -16.,   8., -34., -40.,  36., -34.,  30.]], device='cuda:0')
+pgd early stop
+Adv example prediction (first 2 examples and 2 restarts):
+ tensor([[[ 34.,  32.,  -2.,  -4.,  18., -12., -46.,  38.,  50.,   6.,  16.,
+           14.,  10., -28., -16.,  -8., -16.,  -4.,   6., -16.,  18.,  32.,
+          -20., -34.,  60., -50.,  60., -12.,  -4.,  -6.,   2., -16.,  14.,
+           -2.,  14.,  -4., -30.,  58.,  -4., -14.,  14.,  -4.,  28.],
+         [ 34.,  32.,  -2.,  -4.,  18., -12., -46.,  38.,  50.,   6.,  16.,
+           14.,  10., -28., -16.,  -8., -16.,  -4.,   6., -16.,  18.,  32.,
+          -20., -34.,  60., -50.,  60., -12.,  -4.,  -6.,   2., -16.,  14.,
+           -2.,  14.,  -4., -30.,  58.,  -4., -14.,  14.,  -4.,  28.]]],
+       device='cuda:0')
+PGD attack margin (first 2 examles and 10 specs):
+ tensor([[[  4.,   6.,  40.,  42.,  20.,  50.,  84., -12.,  32.,  22.]]],
+       device='cuda:0')
+number of violation:  4
+Attack finished in 0.1593 seconds.
+PGD attack succeeded!
+Result: unsafe-pgd in 0.4272 seconds
+############# Summary #############
+Final verified acc: 0.0% (total 15 examples)
+Problem instances count: 15 , total verified (safe/unsat): 0 , total falsified (unsafe/sat): 15 , timeout: 0
+mean time for ALL instances (total 15):1.0548673590923336, max time: 7.101173639297485
+mean time for verified UNSAFE instances (total 15): 1.0548680623372395, max time: 7.101173639297485
+unsafe-pgd (total 15), index: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
